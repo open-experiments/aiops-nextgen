@@ -204,7 +204,7 @@ aiops-nextgen/
     ├── shared/                 # Shared Python package (models, db, redis, config)
     ├── cluster-registry/       # Fleet management service
     ├── observability-collector/# Metrics federation service
-    ├── intelligence-engine/    # AI/LLM service (pending)
+    ├── intelligence-engine/    # AI/LLM service
     ├── realtime-streaming/     # WebSocket service (pending)
     ├── api-gateway/            # Entry point service (pending)
     ├── frontend/               # React SPA (pending)
@@ -221,7 +221,7 @@ aiops-nextgen/
 | 1 | Foundation & Data Layer (shared models, PostgreSQL, Redis) | ✅ Complete |
 | 2 | Cluster Registry (fleet CRUD, health monitoring, events) | ✅ Complete |
 | 3 | Observability Collector (metrics, alerts, GPU telemetry) | ✅ Complete |
-| 4 | Intelligence Engine (LLM, personas, chat, anomaly) | Pending |
+| 4 | Intelligence Engine (LLM, personas, chat, tool calling) | ✅ Complete |
 | 5 | Real-time Streaming & API Gateway | Pending |
 | 6 | Frontend (React SPA) | Pending |
 
@@ -251,9 +251,10 @@ cd aiops-nextgen
 # Start infrastructure (PostgreSQL + Redis)
 cd src && docker-compose up -d postgresql redis
 
-# Start services
+# Start services (each in a separate terminal)
 cd src/cluster-registry && uvicorn app.main:app --reload --port 8001
 cd src/observability-collector && uvicorn app.main:app --reload --port 8002
+cd src/intelligence-engine && uvicorn app.main:app --reload --port 8003
 ```
 
 ### OpenShift Deployment
@@ -276,5 +277,6 @@ oc get pods -n aiops-nextgen
 |---------|------|--------------|
 | Cluster Registry | 8001 | `GET /health`, `GET /ready` |
 | Observability Collector | 8002 | `GET /health`, `GET /ready` |
+| Intelligence Engine | 8003 | `GET /health`, `GET /ready` |
 
 ---
