@@ -28,32 +28,32 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                                   USERS                                              │
-│                    Operators · SREs · Platform Engineers                             │
+│                                   USERS                                             │
+│                    Operators · SREs · Platform Engineers                            │
 └─────────────────────────────────────┬───────────────────────────────────────────────┘
                                       │
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                              PRESENTATION LAYER                                      │
+│                              PRESENTATION LAYER                                     │
 │  ┌───────────────────────────────────────────────────────────────────────────────┐  │
-│  │                         Frontend (React + TypeScript)                          │  │
+│  │                         Frontend (React + TypeScript)                         │  │
 │  │   Fleet Dashboard │ GPU Monitoring │ AI Chat │ Observability Explorer         │  │
 │  └───────────────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────┬───────────────────────────────────────────────┘
                                       │ HTTPS / WSS
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                                ACCESS LAYER                                          │
+│                                ACCESS LAYER                                         │
 │  ┌───────────────────────────────────────────────────────────────────────────────┐  │
-│  │                      API Gateway (FastAPI + OpenShift OAuth)                   │  │
+│  │                      API Gateway (FastAPI + OpenShift OAuth)                  │  │
 │  │   REST API │ WebSocket Proxy │ MCP Protocol │ Rate Limiting │ RBAC            │  │
 │  └───────────────────────────────────────────────────────────────────────────────┘  │
 └───────────┬─────────────────┬─────────────────┬─────────────────┬───────────────────┘
             │                 │                 │                 │
             ▼                 ▼                 ▼                 ▼
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                               SERVICE LAYER                                          │
-│                                                                                      │
+│                               SERVICE LAYER                                         │
+│                                                                                     │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
 │  │ Cluster         │  │ Observability   │  │ Intelligence    │  │ Real-Time       │ │
 │  │ Registry        │  │ Collector       │  │ Engine          │  │ Streaming       │ │
@@ -68,23 +68,23 @@ AIOps NextGen is a unified observability and intelligence platform that provides
             │                    │                    │                    │
             ▼                    ▼                    ▼                    ▼
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                                 DATA LAYER                                           │
-│                                                                                      │
+│                                 DATA LAYER                                          │
+│                                                                                     │
 │  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────────────┐  │
-│  │ PostgreSQL          │  │ Redis               │  │ Object Storage (MinIO/ODF) │  │
+│  │ PostgreSQL          │  │ Redis               │  │ Object Storage (MinIO/ODF)  │  │
 │  │                     │  │                     │  │                             │  │
 │  │ • clusters schema   │  │ • DB 0: PubSub      │  │ • aiops-reports bucket      │  │
 │  │ • intelligence      │  │ • DB 1: Rate Limit  │  │ • aiops-attachments bucket  │  │
 │  │   schema            │  │ • DB 2: Cache       │  │                             │  │
 │  │                     │  │ • DB 3: Sessions    │  │                             │  │
 │  └─────────────────────┘  └─────────────────────┘  └─────────────────────────────┘  │
-│                                                                                      │
+│                                                                                     │
 └─────────────────────────────────────────────────────────────────────────────────────┘
                                       │
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                          ON-PREMISES INTEGRATIONS                                    │
-│                                                                                      │
+│                          ON-PREMISES INTEGRATIONS                                   │
+│                                                                                     │
 │  ┌─────────────────────────────────────┐  ┌─────────────────────────────────────┐   │
 │  │         SPOKE CLUSTERS              │  │      LOCAL LLM (Air-Gapped)         │   │
 │  │                                     │  │                                     │   │
@@ -95,7 +95,7 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 │  │                                     │  │  │  • OpenAI-Compatible API        ││   │
 │  │  100+ OCP Clusters (Hub-Spoke)      │  │  └─────────────────────────────────┘│   │
 │  └─────────────────────────────────────┘  └─────────────────────────────────────┘   │
-│                                                                                      │
+│                                                                                     │
 └─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -105,7 +105,7 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────────┐
-│                              REQUEST FLOWS                                            │
+│                              REQUEST FLOWS                                           │
 └──────────────────────────────────────────────────────────────────────────────────────┘
 
 1. USER QUERY FLOW (Metrics/Traces/Logs)
@@ -136,8 +136,8 @@ AIOps NextGen is a unified observability and intelligence platform that provides
                     │    │                                            │
                     │    ▼                                            ▼
                     │ ┌───────────────┐                    ┌─────────────────┐
-                    └─│ Observability │ (query_metrics,   │ Cluster Registry│
-                      │ Collector     │  search_traces)   │ (list_clusters) │
+                    └─│ Observability │ (query_metrics,    │ Cluster Registry│
+                      │ Collector     │  search_traces)    │ (list_clusters) │
                       └───────────────┘                    └─────────────────┘
 
 3. REAL-TIME EVENT FLOW (Push Updates)
