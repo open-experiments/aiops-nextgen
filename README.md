@@ -185,7 +185,6 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 ```
 aiops-nextgen/
 ├── README.md                    # This file
-├── CLAUDE.md                    # AI assistant guidance
 ├── LICENSE                      # MIT License
 ├── specs/                       # Component specifications
 │   ├── 00-overview.md          # Architecture overview
