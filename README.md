@@ -13,7 +13,7 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 
 ## Target Platform
 
-**OpenShift Container Platform 4.14+**
+**OpenShift Container Platform 4.16+**
 
 ## Project Structure
 
