@@ -86,7 +86,7 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 │  │  │ Metrics │ │ Traces  │ │ Logs  │  │  │  │ (Local) │ │ Claude  │ │  GPT  │  │   │
 │  │  └─────────┘ └─────────┘ └───────┘  │  │  └─────────┘ └─────────┘ └───────┘  │   │
 │  │                                     │  │                                     │   │
-│  │  100+ OCP Clusters (Hub-Spoke)      │  │  Fallback Chain for Resilience      │   │
+│  │  100+ OCP Clusters (Hub-Spoke)      │  │  + Google Gemini (Fallback Chain)   │   │
 │  └─────────────────────────────────────┘  └─────────────────────────────────────┘   │
 │                                                                                      │
 └─────────────────────────────────────────────────────────────────────────────────────┘
@@ -222,7 +222,7 @@ aiops-nextgen/
 
 | Environment | CPU | Memory | Storage |
 |-------------|-----|--------|---------|
-| Development | 2.6 cores | 4.5 Gi | 11 Gi |
+| Development | 2.6 cores | 4.4 Gi | 11 Gi |
 | Production (HA) | 8.2 cores | 14.5 Gi | 55 Gi |
 | + Local LLM (3B) | +4 cores | +16 Gi | +50 Gi |
 

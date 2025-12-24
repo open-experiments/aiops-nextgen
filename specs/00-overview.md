@@ -196,7 +196,7 @@ Alert Flow:
 All AIOps NextGen components run on the hub cluster:
 - Single namespace: `aiops-nextgen`
 - Managed via Helm chart or Kustomize
-- Minimum (Dev): 2.6 CPU cores, 4.5Gi RAM
+- Minimum (Dev): 2.6 CPU cores, 4.4Gi RAM
 - Production (HA): 8.2 CPU cores, 14.5Gi RAM
 
 ### 8.2 Spoke Clusters
