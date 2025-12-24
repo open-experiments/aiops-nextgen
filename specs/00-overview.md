@@ -307,8 +307,8 @@ Lightweight mode for resource-constrained environments:
 1. **Hub Cluster Selection**: Should the platform support running on any cluster or require a dedicated hub?
 2. **Multi-tenancy**: Should we support multiple tenants (teams/orgs) with data isolation?
 3. **Offline Mode**: How should edge clusters behave when disconnected from hub?
-4. **LLM Provider Priority**: Default to local vLLM or allow external providers (OpenAI, Anthropic)?
-5. **GPU Metrics Source**: Use DCGM exporter (Prometheus) or direct nvidia-smi queries?
+4. **GPU Metrics Source**: Use DCGM exporter (Prometheus) or direct nvidia-smi queries?
+5. **LLM Model Selection**: Which local models to support (Llama 3.x, Mistral, Qwen)?
 
 ---
 

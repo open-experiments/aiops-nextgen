@@ -208,7 +208,7 @@ intelligence-engine:
   enabled: true
   replicas: 2
   llm:
-    provider: local  # local, anthropic, openai, google
+    provider: local  # Air-gapped: only local vLLM supported
     localUrl: http://vllm:8080/v1
     model: meta-llama/Llama-3.2-3B-Instruct
   resources:
