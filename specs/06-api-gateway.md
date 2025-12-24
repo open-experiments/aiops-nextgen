@@ -41,50 +41,50 @@ The API Gateway serves as the single entry point for all external requests. It h
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              API GATEWAY                                     │
+│                              API GATEWAY                                    │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
+│                                                                             │
 │  ┌────────────────────────────────────────────────────────────────────────┐ │
-│  │                      Entry Points                                       │ │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                 │ │
-│  │  │ REST API     │  │ WebSocket    │  │ MCP Protocol │                 │ │
-│  │  │ /api/v1/*    │  │ /ws          │  │ /mcp         │                 │ │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘                 │ │
+│  │                      Entry Points                                      │ │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                  │ │
+│  │  │ REST API     │  │ WebSocket    │  │ MCP Protocol │                  │ │
+│  │  │ /api/v1/*    │  │ /ws          │  │ /mcp         │                  │ │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘                  │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
-│                                      │                                       │
+│                                      │                                      │
 │  ┌────────────────────────────────────────────────────────────────────────┐ │
-│  │                      Middleware Stack                                   │ │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                 │ │
-│  │  │ Auth         │  │ Rate Limit   │  │ Request      │                 │ │
-│  │  │ Middleware   │  │ Middleware   │  │ Validation   │                 │ │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘                 │ │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                 │ │
-│  │  │ CORS         │  │ Logging      │  │ Tracing      │                 │ │
-│  │  │ Middleware   │  │ Middleware   │  │ Middleware   │                 │ │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘                 │ │
+│  │                      Middleware Stack                                  │ │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                  │ │
+│  │  │ Auth         │  │ Rate Limit   │  │ Request      │                  │ │
+│  │  │ Middleware   │  │ Middleware   │  │ Validation   │                  │ │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘                  │ │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                  │ │
+│  │  │ CORS         │  │ Logging      │  │ Tracing      │                  │ │
+│  │  │ Middleware   │  │ Middleware   │  │ Middleware   │                  │ │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘                  │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
-│                                      │                                       │
+│                                      │                                      │
 │  ┌────────────────────────────────────────────────────────────────────────┐ │
-│  │                         Router                                          │ │
-│  │  ┌──────────────────────────────────────────────────────────────────┐ │ │
-│  │  │                    Route Table                                    │ │ │
-│  │  │                                                                   │ │ │
-│  │  │  /api/v1/clusters/*     → Cluster Registry                       │ │ │
-│  │  │  /api/v1/metrics/*      → Observability Collector                │ │ │
-│  │  │  /api/v1/traces/*       → Observability Collector                │ │ │
-│  │  │  /api/v1/logs/*         → Observability Collector                │ │ │
-│  │  │  /api/v1/alerts/*       → Observability Collector                │ │ │
-│  │  │  /api/v1/gpu/*          → Observability Collector                │ │ │
-│  │  │  /api/v1/chat/*         → Intelligence Engine                    │ │ │
-│  │  │  /api/v1/personas/*     → Intelligence Engine                    │ │ │
-│  │  │  /api/v1/analysis/*     → Intelligence Engine                    │ │ │
-│  │  │  /api/v1/reports/*      → Intelligence Engine                    │ │ │
-│  │  │  /mcp                   → Intelligence Engine                    │ │ │
-│  │  │  /ws                    → Real-Time Streaming                    │ │ │
-│  │  │                                                                   │ │ │
-│  │  └──────────────────────────────────────────────────────────────────┘ │ │
+│  │                         Router                                         │ │
+│  │  ┌──────────────────────────────────────────────────────────────────┐  │ │
+│  │  │                    Route Table                                   │  │ │
+│  │  │                                                                  │  │ │
+│  │  │  /api/v1/clusters/*     → Cluster Registry                       │  │ │
+│  │  │  /api/v1/metrics/*      → Observability Collector                │  │ │
+│  │  │  /api/v1/traces/*       → Observability Collector                │  │ │
+│  │  │  /api/v1/logs/*         → Observability Collector                │  │ │
+│  │  │  /api/v1/alerts/*       → Observability Collector                │  │ │
+│  │  │  /api/v1/gpu/*          → Observability Collector                │  │ │
+│  │  │  /api/v1/chat/*         → Intelligence Engine                    │  │ │
+│  │  │  /api/v1/personas/*     → Intelligence Engine                    │  │ │
+│  │  │  /api/v1/analysis/*     → Intelligence Engine                    │  │ │
+│  │  │  /api/v1/reports/*      → Intelligence Engine                    │  │ │
+│  │  │  /mcp                   → Intelligence Engine                    │  │ │
+│  │  │  /ws                    → Real-Time Streaming                    │  │ │
+│  │  │                                                                  │  │ │
+│  │  └──────────────────────────────────────────────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
-│                                                                              │
+│                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
           ┌───────────────────────────┼───────────────────────────┐
