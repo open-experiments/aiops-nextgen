@@ -489,9 +489,20 @@ spec:
         - protocol: TCP
           port: 8080
 
-# Note: Backend deployments must include these labels:
+# Required labels for each service deployment:
+#
+# API Gateway:
+#   app.kubernetes.io/part-of: aiops-nextgen
+#   app.kubernetes.io/component: gateway
+#
+# Backend services (cluster-registry, observability-collector,
+#                   intelligence-engine, realtime-streaming):
 #   app.kubernetes.io/part-of: aiops-nextgen
 #   app.kubernetes.io/component: backend
+#
+# Frontend:
+#   app.kubernetes.io/part-of: aiops-nextgen
+#   app.kubernetes.io/component: frontend
 
 ---
 # Allow ingress from OpenShift Router for frontend

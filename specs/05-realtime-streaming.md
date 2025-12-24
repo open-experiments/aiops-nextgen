@@ -64,13 +64,13 @@ The Real-Time Streaming Service provides live data delivery to clients via WebSo
 │  │  │  Client → [event_types, cluster_filter, namespace_filter]        │  │ │
 │  │  │                                                                  │  │ │
 │  │  │  Event Types:                                                    │  │ │
-│  │  │  • CLUSTER_STATUS_CHANGED                                        │  │ │
-│  │  │  • METRIC_UPDATE                                                 │  │ │
-│  │  │  • ALERT_FIRED / ALERT_RESOLVED                                  │  │ │
-│  │  │  • GPU_UPDATE                                                    │  │ │
-│  │  │  • TRACE_RECEIVED                                                │  │ │
-│  │  │  • ANOMALY_DETECTED                                              │  │ │
-│  │  │  • CHAT_MESSAGE                                                  │  │ │
+│  │  │  • Cluster: CLUSTER_REGISTERED, CLUSTER_UPDATED, CLUSTER_DELETED │  │ │
+│  │  │  •          CLUSTER_STATUS_CHANGED, CLUSTER_CREDENTIALS_UPDATED  │  │ │
+│  │  │  •          CLUSTER_CAPABILITIES_CHANGED                         │  │ │
+│  │  │  • Observability: METRIC_UPDATE, ALERT_FIRED, ALERT_RESOLVED     │  │ │
+│  │  │  •                 GPU_UPDATE, TRACE_RECEIVED                    │  │ │
+│  │  │  • Intelligence: ANOMALY_DETECTED, CHAT_MESSAGE                  │  │ │
+│  │  │  •                RCA_COMPLETE, REPORT_GENERATED                 │  │ │
 │  │  └──────────────────────────────────────────────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
 │                                      │                                      │
@@ -573,9 +573,9 @@ backend streaming_backend
 
 | Source | Event Types |
 |--------|-------------|
-| Cluster Registry | `CLUSTER_STATUS_CHANGED`, `CLUSTER_REGISTERED`, `CLUSTER_DELETED` |
-| Observability Collector | `ALERT_FIRED`, `ALERT_RESOLVED`, `METRIC_UPDATE`, `GPU_UPDATE` |
-| Intelligence Engine | `ANOMALY_DETECTED`, `CHAT_MESSAGE`, `RCA_COMPLETE` |
+| Cluster Registry | `CLUSTER_REGISTERED`, `CLUSTER_UPDATED`, `CLUSTER_DELETED`, `CLUSTER_STATUS_CHANGED`, `CLUSTER_CREDENTIALS_UPDATED`, `CLUSTER_CAPABILITIES_CHANGED` |
+| Observability Collector | `ALERT_FIRED`, `ALERT_RESOLVED`, `METRIC_UPDATE`, `GPU_UPDATE`, `TRACE_RECEIVED` |
+| Intelligence Engine | `ANOMALY_DETECTED`, `CHAT_MESSAGE`, `RCA_COMPLETE`, `REPORT_GENERATED` |
 
 ---
 

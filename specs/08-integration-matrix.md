@@ -222,14 +222,29 @@ aiops:events:anomaly                 # All anomaly events
 
 ### 6.1 PostgreSQL
 
-| Database | Owner | Tables | Consumers |
-|----------|-------|--------|-----------|
-| `aiops_clusters` | Cluster Registry | `clusters`, `cluster_health_history` | Read: All services |
-| `aiops_intelligence` | Intelligence Engine | `chat_sessions`, `chat_messages`, `personas`, `reports` | Read: API Gateway |
+**Single database `aiops` with separate schemas for isolation:**
+
+| Schema | Owner | Tables | Consumers |
+|--------|-------|--------|-----------|
+| `clusters` | Cluster Registry | `clusters`, `cluster_health_history` | Read: All services |
+| `intelligence` | Intelligence Engine | `chat_sessions`, `chat_messages`, `personas`, `reports` | Read: API Gateway |
+
+```
+Database: aiops
+├── Schema: clusters (owned by cluster-registry service account)
+│   ├── clusters
+│   └── cluster_health_history
+└── Schema: intelligence (owned by intelligence-engine service account)
+    ├── chat_sessions
+    ├── chat_messages
+    ├── personas
+    └── reports
+```
 
 **Cross-Service Access:**
-- Other services access Cluster Registry DB through REST API only (no direct DB access)
-- Intelligence Engine DB is private; accessed only through API
+- Other services access Cluster Registry data through REST API only (no direct DB access)
+- Intelligence Engine schema is private; accessed only through API
+- Each service connects with its own credentials and schema permissions
 
 ### 6.2 Redis
 

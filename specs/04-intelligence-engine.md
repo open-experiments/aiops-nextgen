@@ -301,7 +301,7 @@ Content-Type: application/json
       "id": "platform-ops",
       "name": "Platform Operations Expert",
       "description": "Specialized in OpenShift platform operations, upgrades, and troubleshooting",
-      "capabilities": ["query_metrics", "search_traces", "query_logs", "list_alerts"],
+      "capabilities": ["query_metrics", "search_traces", "query_logs", "list_alerts", "list_clusters", "get_cluster_status"],
       "icon": "server",
       "is_builtin": true
     },
@@ -309,7 +309,7 @@ Content-Type: application/json
       "id": "gpu-expert",
       "name": "GPU Infrastructure Expert",
       "description": "Specialized in GPU workloads, CUDA optimization, and vLLM performance",
-      "capabilities": ["get_gpu_nodes", "get_gpu_processes", "query_metrics"],
+      "capabilities": ["get_gpu_nodes", "get_gpu_processes", "get_gpu_summary", "query_metrics", "list_clusters"],
       "icon": "gpu",
       "is_builtin": true
     },
@@ -317,7 +317,7 @@ Content-Type: application/json
       "id": "network-cnf",
       "name": "Network & CNF Expert",
       "description": "Specialized in CNF workloads, 5G RAN, SR-IOV, and PTP",
-      "capabilities": ["get_cnf_workloads", "get_ptp_status", "get_dpdk_stats", "query_metrics"],
+      "capabilities": ["get_cnf_workloads", "get_ptp_status", "get_dpdk_stats", "get_sriov_status", "query_metrics", "search_traces"],
       "icon": "network",
       "is_builtin": true
     },
@@ -325,7 +325,7 @@ Content-Type: application/json
       "id": "telco-5g",
       "name": "Telco 5G Specialist",
       "description": "Deep expertise in 5G/6G architecture, O-RAN, and telco operations",
-      "capabilities": ["get_cnf_workloads", "query_metrics", "search_traces"],
+      "capabilities": ["get_cnf_workloads", "query_metrics", "search_traces", "query_logs", "list_alerts"],
       "icon": "signal",
       "is_builtin": true
     }
