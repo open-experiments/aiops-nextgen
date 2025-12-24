@@ -1,0 +1,248 @@
+# AIOps NextGen CI Pipeline
+#
+# Spec Reference: specs/09-deployment.md
+# Container Registry: quay.io/fnar/aiops-nextgen
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.11"
+  REGISTRY: quay.io
+  IMAGE_REPOSITORY: fnar/aiops-nextgen
+
+jobs:
+  # ===========================================================================
+  # Lint and Format Check
+  # ===========================================================================
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff mypy black
+
+      - name: Run Ruff (lint)
+        run: ruff check src/ tests/
+
+      - name: Run Ruff (format check)
+        run: ruff format --check src/ tests/
+
+      - name: Run Black (format check)
+        run: black --check src/ tests/
+
+  # ===========================================================================
+  # Type Checking
+  # ===========================================================================
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install -e src/shared
+
+      - name: Run MyPy
+        run: mypy src/shared --ignore-missing-imports
+        continue-on-error: true  # Allow failures during initial development
+
+  # ===========================================================================
+  # Unit Tests
+  # ===========================================================================
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install -e src/shared
+
+      - name: Run unit tests
+        run: |
+          pytest tests/unit -v --cov=src --cov-report=xml --cov-report=html -m "not integration"
+        env:
+          ENV: development
+          LOG_LEVEL: DEBUG
+          LOG_FORMAT: text
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+
+  # ===========================================================================
+  # Integration Tests (requires services)
+  # ===========================================================================
+  integration-test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: aiops
+          POSTGRES_PASSWORD: aiops_test_password
+          POSTGRES_DB: aiops_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install -e src/shared
+
+      - name: Initialize database
+        run: |
+          PGPASSWORD=aiops_test_password psql -h localhost -U aiops -d aiops_test -f scripts/init-db.sql
+
+      - name: Run integration tests
+        run: |
+          pytest tests/integration -v -m "integration"
+        env:
+          ENV: development
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_USER: aiops
+          POSTGRES_PASSWORD: aiops_test_password
+          POSTGRES_DB: aiops_test
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+
+  # ===========================================================================
+  # Build Container Images
+  # ===========================================================================
+  build-images:
+    name: Build Images
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        service:
+          - cluster-registry
+          - observability-collector
+          - intelligence-engine
+          - realtime-streaming
+          - api-gateway
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Quay.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_REPOSITORY }}-${{ matrix.service }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: src/${{ matrix.service }}/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ===========================================================================
+  # Security Scan
+  # ===========================================================================
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [build-images]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        service:
+          - cluster-registry
+          - observability-collector
+          - intelligence-engine
+          - realtime-streaming
+          - api-gateway
+
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_REPOSITORY }}-${{ matrix.service }}:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'

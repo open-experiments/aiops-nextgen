@@ -1,0 +1,230 @@
+# Docker Compose for AIOps NextGen Development
+#
+# Spec Reference: specs/09-deployment.md Section 4
+#
+# Usage:
+#   docker-compose up -d              # Start all services
+#   docker-compose up -d postgres redis  # Start dependencies only
+#   docker-compose logs -f            # View logs
+#   docker-compose down -v            # Stop and remove volumes
+
+version: "3.9"
+
+services:
+  # ==========================================================================
+  # Infrastructure Services
+  # ==========================================================================
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: aiops-postgres
+    environment:
+      POSTGRES_USER: aiops
+      POSTGRES_PASSWORD: aiops_dev_password
+      POSTGRES_DB: aiops
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aiops -d aiops"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aiops-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: aiops-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aiops-network
+
+  minio:
+    image: minio/minio:latest
+    container_name: aiops-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: aiops
+      MINIO_ROOT_PASSWORD: aiops_minio_password
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - aiops-network
+
+  # ==========================================================================
+  # Application Services (commented out until images are built)
+  # ==========================================================================
+
+  # cluster-registry:
+  #   build:
+  #     context: .
+  #     dockerfile: src/cluster-registry/Dockerfile
+  #   container_name: aiops-cluster-registry
+  #   environment:
+  #     ENV: development
+  #     LOG_LEVEL: DEBUG
+  #     LOG_FORMAT: text
+  #     POSTGRES_HOST: postgres
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_USER: aiops
+  #     POSTGRES_PASSWORD: aiops_dev_password
+  #     POSTGRES_DB: aiops
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #   ports:
+  #     - "8081:8080"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   networks:
+  #     - aiops-network
+
+  # observability-collector:
+  #   build:
+  #     context: .
+  #     dockerfile: src/observability-collector/Dockerfile
+  #   container_name: aiops-observability-collector
+  #   environment:
+  #     ENV: development
+  #     LOG_LEVEL: DEBUG
+  #     LOG_FORMAT: text
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #     SERVICE_CLUSTER_REGISTRY_URL: http://cluster-registry:8080
+  #   ports:
+  #     - "8082:8080"
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   networks:
+  #     - aiops-network
+
+  # intelligence-engine:
+  #   build:
+  #     context: .
+  #     dockerfile: src/intelligence-engine/Dockerfile
+  #   container_name: aiops-intelligence-engine
+  #   environment:
+  #     ENV: development
+  #     LOG_LEVEL: DEBUG
+  #     LOG_FORMAT: text
+  #     POSTGRES_HOST: postgres
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_USER: aiops
+  #     POSTGRES_PASSWORD: aiops_dev_password
+  #     POSTGRES_DB: aiops
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #     LLM_PROVIDER: local
+  #     LLM_LOCAL_URL: http://host.docker.internal:8080/v1
+  #     SERVICE_CLUSTER_REGISTRY_URL: http://cluster-registry:8080
+  #     SERVICE_OBSERVABILITY_COLLECTOR_URL: http://observability-collector:8080
+  #   ports:
+  #     - "8083:8080"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   networks:
+  #     - aiops-network
+
+  # realtime-streaming:
+  #   build:
+  #     context: .
+  #     dockerfile: src/realtime-streaming/Dockerfile
+  #   container_name: aiops-realtime-streaming
+  #   environment:
+  #     ENV: development
+  #     LOG_LEVEL: DEBUG
+  #     LOG_FORMAT: text
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #   ports:
+  #     - "8084:8080"
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   networks:
+  #     - aiops-network
+
+  # api-gateway:
+  #   build:
+  #     context: .
+  #     dockerfile: src/api-gateway/Dockerfile
+  #   container_name: aiops-api-gateway
+  #   environment:
+  #     ENV: development
+  #     LOG_LEVEL: DEBUG
+  #     LOG_FORMAT: text
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #     SERVICE_CLUSTER_REGISTRY_URL: http://cluster-registry:8080
+  #     SERVICE_OBSERVABILITY_COLLECTOR_URL: http://observability-collector:8080
+  #     SERVICE_INTELLIGENCE_ENGINE_URL: http://intelligence-engine:8080
+  #     SERVICE_REALTIME_STREAMING_URL: http://realtime-streaming:8080
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   networks:
+  #     - aiops-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  minio_data:
+    driver: local
+
+networks:
+  aiops-network:
+    driver: bridge
