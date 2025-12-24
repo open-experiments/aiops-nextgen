@@ -27,7 +27,7 @@ This document specifies the deployment architecture for AIOps NextGen on OpenShi
 | Requirement | Value |
 |-------------|-------|
 | Platform | OpenShift Container Platform |
-| Version | 4.14+ |
+| Version | 4.16+ |
 | Architecture | x86_64, ARM64 |
 | Cluster Type | Hub cluster (dedicated or shared) |
 
@@ -268,6 +268,8 @@ spec:
     metadata:
       labels:
         {{- include "api-gateway.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/part-of: aiops-nextgen
+        app.kubernetes.io/component: gateway
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
@@ -474,6 +476,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
+      app.kubernetes.io/part-of: aiops-nextgen
       app.kubernetes.io/component: backend
   policyTypes:
     - Ingress
@@ -485,6 +488,10 @@ spec:
       ports:
         - protocol: TCP
           port: 8080
+
+# Note: Backend deployments must include these labels:
+#   app.kubernetes.io/part-of: aiops-nextgen
+#   app.kubernetes.io/component: backend
 
 ---
 # Allow ingress from OpenShift Router for frontend

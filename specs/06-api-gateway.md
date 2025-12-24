@@ -129,6 +129,7 @@ https://aiops.example.com/api/v1
 | `/api/v1/reports` | Intelligence Engine | Report generation |
 | `/mcp` | Intelligence Engine | MCP protocol |
 | `/ws` | Real-Time Streaming | WebSocket |
+| `/api/v1/streaming` | Real-Time Streaming | Streaming admin/status |
 
 ### 4.3 Public Endpoints (No Auth)
 
@@ -138,6 +139,12 @@ https://aiops.example.com/api/v1
 | `/ready` | Gateway readiness |
 | `/docs` | OpenAPI documentation |
 | `/openapi.json` | OpenAPI spec |
+
+### 4.4 Internal Endpoints
+
+| Path | Description |
+|------|-------------|
+| `/auth/validate` | Token validation for internal services (e.g., WebSocket auth) |
 
 ---
 

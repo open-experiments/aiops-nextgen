@@ -204,6 +204,8 @@ aiops:events:anomaly                 # All anomaly events
 | `CLUSTER_UPDATED` | Cluster Registry | `Cluster` | Cluster metadata changed |
 | `CLUSTER_DELETED` | Cluster Registry | `{cluster_id}` | Cluster removed |
 | `CLUSTER_STATUS_CHANGED` | Cluster Registry | `ClusterStatusChange` | Health state changed |
+| `CLUSTER_CREDENTIALS_UPDATED` | Cluster Registry | `{cluster_id}` | Credentials rotated |
+| `CLUSTER_CAPABILITIES_CHANGED` | Cluster Registry | `{cluster_id, capabilities}` | Capabilities changed |
 | `ALERT_FIRED` | Observability Collector | `Alert` | New alert firing |
 | `ALERT_RESOLVED` | Observability Collector | `Alert` | Alert resolved |
 | `METRIC_UPDATE` | Observability Collector | `MetricEvent` | Significant metric change |

@@ -196,7 +196,8 @@ Alert Flow:
 All AIOps NextGen components run on the hub cluster:
 - Single namespace: `aiops-nextgen`
 - Managed via Helm chart or Kustomize
-- Requires: 8 CPU cores, 16GB RAM minimum
+- Minimum (Dev): 2.6 CPU cores, 4.5Gi RAM
+- Production (HA): 8.2 CPU cores, 14.5Gi RAM
 
 ### 8.2 Spoke Clusters
 No additional components required on spoke clusters:
@@ -225,7 +226,7 @@ Lightweight mode for resource-constrained environments:
 | Object Storage | MinIO / ODF | S3-compatible, OpenShift native |
 | Observability | OpenTelemetry | Vendor neutral, comprehensive |
 | Container Runtime | Podman/CRI-O | OpenShift native |
-| Orchestration | OpenShift 4.14+ | Target platform |
+| Orchestration | OpenShift 4.16+ | Target platform |
 
 ---
 

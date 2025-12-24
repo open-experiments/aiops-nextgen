@@ -293,7 +293,7 @@ Content-Type: application/json
       "id": "default",
       "name": "Default Assistant",
       "description": "General-purpose AI assistant for platform operations",
-      "capabilities": ["query_metrics", "search_traces", "list_alerts", "get_gpu_nodes"],
+      "capabilities": ["query_metrics", "search_traces", "query_logs", "list_alerts", "get_gpu_nodes", "list_clusters"],
       "icon": "robot",
       "is_builtin": true
     },
@@ -983,7 +983,7 @@ intelligence_engine:
   observability_collector_url: "http://observability-collector:8080"
   cluster_registry_url: "http://cluster-registry:8080"
   redis_url: "redis://redis:6379/0"
-  database_url: "postgresql://user:pass@postgres:5432/aiops"
+  database_url: "postgresql://user:pass@postgresql:5432/aiops"
   object_store_url: "http://minio:9000"
 
   # LLM Configuration

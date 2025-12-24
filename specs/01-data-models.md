@@ -1001,6 +1001,10 @@ AnomalyDetection:
     severity:
       type: string
       enum: [HIGH, MEDIUM, LOW]
+      description: |
+        Note: Anomaly severity uses HIGH/MEDIUM/LOW scale.
+        Alert severity uses CRITICAL/WARNING/INFO scale.
+        Frontend should map between these when correlating anomalies with alerts.
 
     confidence_score:
       type: number
@@ -1058,14 +1062,24 @@ Event:
     event_type:
       type: string
       enum:
+        # Cluster Registry Events
+        - CLUSTER_REGISTERED
+        - CLUSTER_UPDATED
+        - CLUSTER_DELETED
         - CLUSTER_STATUS_CHANGED
+        - CLUSTER_CREDENTIALS_UPDATED
+        - CLUSTER_CAPABILITIES_CHANGED
+        # Observability Collector Events
         - METRIC_UPDATE
         - ALERT_FIRED
         - ALERT_RESOLVED
         - TRACE_RECEIVED
         - GPU_UPDATE
+        # Intelligence Engine Events
         - ANOMALY_DETECTED
         - CHAT_MESSAGE
+        - RCA_COMPLETE
+        - REPORT_GENERATED
 
     cluster_id:
       type: string
