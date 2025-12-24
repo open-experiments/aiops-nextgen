@@ -1,6 +1,6 @@
 # AIOps NextGen Platform
 
-AI-driven Platform Operations for OpenShift Container Platform (OCP) and Cloud-Native Functions (CNFs).
+AI-driven Platform Operations for OpenShift Container Platform (OCP) and Cloud-Native Network Functions (CNFs).
 
 ## Overview
 
