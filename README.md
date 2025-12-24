@@ -93,7 +93,7 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 │  │  │ Metrics  │ │ Traces  │ │ Logs  │  │  │  │  • Llama 3.x / Mistral / Qwen   ││  │
 │  │  └──────────┘ └─────────┘ └───────┘  │  │  │  • GPU Accelerated (A100/H100)  ││  │
 │  │                                      │  │  │  • OpenAI-Compatible API        ││  │
-│  │  100+ OCP Clusters (Hub-Spo ke)      │  │  └─────────────────────────────────┘│  │
+│  │  100+ OCP Clusters (Hub-Spoke)       │  │  └─────────────────────────────────┘│  │
 │  └──────────────────────────────────────┘  └─────────────────────────────────────┘  │
 │                                                                                     │
 └─────────────────────────────────────────────────────────────────────────────────────┘
