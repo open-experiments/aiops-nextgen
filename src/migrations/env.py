@@ -15,8 +15,8 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Add src to path for imports (migrations is now inside src/)
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from shared.config import get_settings
 from shared.database import Base

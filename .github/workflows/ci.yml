@@ -37,13 +37,13 @@ jobs:
           pip install ruff mypy black
 
       - name: Run Ruff (lint)
-        run: ruff check src/ tests/
+        run: ruff check src/
 
       - name: Run Ruff (format check)
-        run: ruff format --check src/ tests/
+        run: ruff format --check src/
 
       - name: Run Black (format check)
-        run: black --check src/ tests/
+        run: black --check src/
 
   # ===========================================================================
   # Type Checking
@@ -62,7 +62,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+          pip install -e "./src[dev]"
           pip install -e src/shared
 
       - name: Run MyPy
@@ -86,12 +86,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+          pip install -e "./src[dev]"
           pip install -e src/shared
 
       - name: Run unit tests
         run: |
-          pytest tests/unit -v --cov=src --cov-report=xml --cov-report=html -m "not integration"
+          pytest src/tests/unit -v --cov=src --cov-report=xml --cov-report=html -m "not integration"
         env:
           ENV: development
           LOG_LEVEL: DEBUG
@@ -146,16 +146,16 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+          pip install -e "./src[dev]"
           pip install -e src/shared
 
       - name: Initialize database
         run: |
-          PGPASSWORD=aiops_test_password psql -h localhost -U aiops -d aiops_test -f scripts/init-db.sql
+          PGPASSWORD=aiops_test_password psql -h localhost -U aiops -d aiops_test -f src/scripts/init-db.sql
 
       - name: Run integration tests
         run: |
-          pytest tests/integration -v -m "integration"
+          pytest src/tests/integration -v -m "integration"
         env:
           ENV: development
           POSTGRES_HOST: localhost

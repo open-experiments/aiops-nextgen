@@ -64,3 +64,6 @@ deploy/helm/**/*.tgz
 *.pem
 *.key
 kubeconfig*
+
+# Claude Code
+CLAUDE.md

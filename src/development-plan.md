@@ -124,23 +124,23 @@ services:
 
 | Task | Spec Reference | Status |
 |------|---------------|--------|
-| Create monorepo structure with shared package | [`00-overview.md`](../specs/00-overview.md) Section 4 | [ ] |
-| Define Pydantic models: Cluster domain | [`01-data-models.md`](../specs/01-data-models.md) Section 2 | [ ] |
-| Define Pydantic models: Observability domain | [`01-data-models.md`](../specs/01-data-models.md) Section 3 | [ ] |
-| Define Pydantic models: GPU domain | [`01-data-models.md`](../specs/01-data-models.md) Section 4 | [ ] |
-| Define Pydantic models: Intelligence domain | [`01-data-models.md`](../specs/01-data-models.md) Section 5 | [ ] |
-| Define Pydantic models: Event models | [`01-data-models.md`](../specs/01-data-models.md) Section 6 | [ ] |
-| Define Pydantic models: Report models | [`01-data-models.md`](../specs/01-data-models.md) Section 7 | [ ] |
-| Define Pydantic models: Common types | [`01-data-models.md`](../specs/01-data-models.md) Section 8 | [ ] |
-| Create SQLAlchemy models for clusters schema | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 7 | [ ] |
-| Create SQLAlchemy models for intelligence schema | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 4.6 | [ ] |
-| Implement Redis client wrapper with pub/sub | [`08-integration-matrix.md`](../specs/08-integration-matrix.md) Section 5 | [ ] |
-| Implement config management with validation | [`09-deployment.md`](../specs/09-deployment.md) Section 8 | [ ] |
-| Set up structured logging | [`00-overview.md`](../specs/00-overview.md) Section 9 | [ ] |
-| Create docker-compose.yml | [`09-deployment.md`](../specs/09-deployment.md) Section 4 | [ ] |
-| Create database migration scripts (Alembic) | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 7 | [ ] |
-| Set up pytest infrastructure | - | [ ] |
-| Create GitHub Actions CI pipeline | - | [ ] |
+| Create monorepo structure with shared package | [`00-overview.md`](../specs/00-overview.md) Section 4 | [x] |
+| Define Pydantic models: Cluster domain | [`01-data-models.md`](../specs/01-data-models.md) Section 2 | [x] |
+| Define Pydantic models: Observability domain | [`01-data-models.md`](../specs/01-data-models.md) Section 3 | [x] |
+| Define Pydantic models: GPU domain | [`01-data-models.md`](../specs/01-data-models.md) Section 4 | [x] |
+| Define Pydantic models: Intelligence domain | [`01-data-models.md`](../specs/01-data-models.md) Section 5 | [x] |
+| Define Pydantic models: Event models | [`01-data-models.md`](../specs/01-data-models.md) Section 6 | [x] |
+| Define Pydantic models: Report models | [`01-data-models.md`](../specs/01-data-models.md) Section 7 | [x] |
+| Define Pydantic models: Common types | [`01-data-models.md`](../specs/01-data-models.md) Section 8 | [x] |
+| Create SQLAlchemy models for clusters schema | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 7 | [x] |
+| Create SQLAlchemy models for intelligence schema | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 4.6 | [x] |
+| Implement Redis client wrapper with pub/sub | [`08-integration-matrix.md`](../specs/08-integration-matrix.md) Section 5 | [x] |
+| Implement config management with validation | [`09-deployment.md`](../specs/09-deployment.md) Section 8 | [x] |
+| Set up structured logging | [`00-overview.md`](../specs/00-overview.md) Section 9 | [x] |
+| Create docker-compose.yml | [`09-deployment.md`](../specs/09-deployment.md) Section 4 | [x] |
+| Create database migration scripts (Alembic) | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 7 | [x] |
+| Set up pytest infrastructure | - | [x] |
+| Create GitHub Actions CI pipeline | - | [x] |
 
 **Exit Criteria:** `docker-compose up` starts PostgreSQL and Redis; shared package importable by all services; all models validate.
 
@@ -223,18 +223,18 @@ CLUSTER_CAPABILITIES_CHANGED
 
 | Task | Spec Reference | Status |
 |------|---------------|--------|
-| Create FastAPI application scaffold | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 3 | [ ] |
-| Implement ClusterService with CRUD | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 5.1 | [ ] |
-| Implement database repository pattern | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 7 | [ ] |
-| Add query filtering | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 4.3 | [ ] |
-| Add pagination support | [`01-data-models.md`](../specs/01-data-models.md) Section 8.1 | [ ] |
-| Implement CredentialService | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 5.2, 7.2 | [ ] |
-| Implement HealthService | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 5.4, 8 | [ ] |
-| Implement EventService | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 5.5, 6 | [ ] |
-| Add OpenAPI documentation | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 4 | [ ] |
-| Write unit tests (>80% coverage) | - | [ ] |
-| Write integration tests | - | [ ] |
-| Add to docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [ ] |
+| Create FastAPI application scaffold | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 3 | [x] |
+| Implement ClusterService with CRUD | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 5.1 | [x] |
+| Implement database repository pattern | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 7 | [x] |
+| Add query filtering | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 4.3 | [x] |
+| Add pagination support | [`01-data-models.md`](../specs/01-data-models.md) Section 8.1 | [x] |
+| Implement CredentialService | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 5.2, 7.2 | [x] |
+| Implement HealthService | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 5.4, 8 | [x] |
+| Implement EventService | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 5.5, 6 | [x] |
+| Add OpenAPI documentation | [`02-cluster-registry.md`](../specs/02-cluster-registry.md) Section 4 | [x] |
+| Write unit tests (>80% coverage) | - | [x] |
+| Write integration tests | - | [~] |
+| Add to docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [x] |
 
 **Exit Criteria:** Can register, list, update, delete clusters via API; health status updates in background; events published to Redis.
 
@@ -620,11 +620,11 @@ useChat()           // Chat sessions + streaming
 
 After Phase 1 completion:
 ```bash
-# Start infrastructure
-docker-compose up -d postgresql redis
+# Start infrastructure (from src/ directory)
+cd src && docker-compose up -d postgres redis
 
-# Run migrations
-cd src/shared && alembic upgrade head
+# Run migrations (from src/ directory)
+cd src && alembic upgrade head
 
 # Start services (each in separate terminal)
 cd src/cluster-registry && uvicorn app.main:app --reload --port 8001

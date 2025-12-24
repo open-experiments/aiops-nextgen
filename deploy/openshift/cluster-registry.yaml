@@ -1,0 +1,106 @@
+---
+# Cluster Registry Deployment
+# Spec Reference: specs/02-cluster-registry.md
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-registry-config
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: cluster-registry
+    app.kubernetes.io/part-of: aiops-nextgen
+data:
+  ENV: "development"
+  LOG_LEVEL: "DEBUG"
+  LOG_FORMAT: "json"
+  POSTGRES_HOST: "postgresql"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DATABASE: "aiops"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cluster-registry
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: cluster-registry
+    app.kubernetes.io/part-of: aiops-nextgen
+    app.kubernetes.io/version: "0.1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cluster-registry
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cluster-registry
+        app.kubernetes.io/part-of: aiops-nextgen
+    spec:
+      containers:
+        - name: cluster-registry
+          image: quay.io/fnar/aiops-nextgen:cluster-registry-v0.1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef:
+                name: cluster-registry-config
+            - secretRef:
+                name: postgresql-credentials
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cluster-registry
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: cluster-registry
+    app.kubernetes.io/part-of: aiops-nextgen
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+  selector:
+    app.kubernetes.io/name: cluster-registry
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: cluster-registry
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: cluster-registry
+    app.kubernetes.io/part-of: aiops-nextgen
+spec:
+  to:
+    kind: Service
+    name: cluster-registry
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

@@ -1,0 +1,15 @@
+# Kustomization for AIOps NextGen OpenShift deployment
+# Spec Reference: specs/09-deployment.md
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: aiops-nextgen
+
+resources:
+  - namespace.yaml
+  - postgresql.yaml
+  - redis.yaml
+  - cluster-registry.yaml
+
+commonLabels:
+  app.kubernetes.io/managed-by: kustomize

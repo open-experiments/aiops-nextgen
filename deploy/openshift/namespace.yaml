@@ -1,0 +1,10 @@
+---
+# Namespace for AIOps NextGen
+# Spec Reference: specs/09-deployment.md
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: aiops-nextgen
+    app.kubernetes.io/part-of: aiops-nextgen

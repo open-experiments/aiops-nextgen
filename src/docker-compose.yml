@@ -71,43 +71,44 @@ services:
       - aiops-network
 
   # ==========================================================================
-  # Application Services (commented out until images are built)
+  # Application Services
   # ==========================================================================
 
-  # cluster-registry:
-  #   build:
-  #     context: .
-  #     dockerfile: src/cluster-registry/Dockerfile
-  #   container_name: aiops-cluster-registry
-  #   environment:
-  #     ENV: development
-  #     LOG_LEVEL: DEBUG
-  #     LOG_FORMAT: text
-  #     POSTGRES_HOST: postgres
-  #     POSTGRES_PORT: 5432
-  #     POSTGRES_USER: aiops
-  #     POSTGRES_PASSWORD: aiops_dev_password
-  #     POSTGRES_DB: aiops
-  #     REDIS_HOST: redis
-  #     REDIS_PORT: 6379
-  #   ports:
-  #     - "8081:8080"
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #   networks:
-  #     - aiops-network
+  cluster-registry:
+    build:
+      context: ..
+      dockerfile: src/cluster-registry/Dockerfile
+    image: quay.io/fnar/aiops-nextgen:cluster-registry-dev
+    container_name: aiops-cluster-registry
+    environment:
+      ENV: development
+      LOG_LEVEL: DEBUG
+      LOG_FORMAT: text
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: aiops
+      POSTGRES_PASSWORD: aiops_dev_password
+      POSTGRES_DATABASE: aiops
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8001:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - aiops-network
 
   # observability-collector:
   #   build:
-  #     context: .
+  #     context: ..
   #     dockerfile: src/observability-collector/Dockerfile
   #   container_name: aiops-observability-collector
   #   environment:
@@ -132,7 +133,7 @@ services:
 
   # intelligence-engine:
   #   build:
-  #     context: .
+  #     context: ..
   #     dockerfile: src/intelligence-engine/Dockerfile
   #   container_name: aiops-intelligence-engine
   #   environment:
@@ -167,7 +168,7 @@ services:
 
   # realtime-streaming:
   #   build:
-  #     context: .
+  #     context: ..
   #     dockerfile: src/realtime-streaming/Dockerfile
   #   container_name: aiops-realtime-streaming
   #   environment:
@@ -191,7 +192,7 @@ services:
 
   # api-gateway:
   #   build:
-  #     context: .
+  #     context: ..
   #     dockerfile: src/api-gateway/Dockerfile
   #   container_name: aiops-api-gateway
   #   environment:

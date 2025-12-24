@@ -10,7 +10,7 @@ build-backend = "hatchling.build"
 name = "aiops-nextgen"
 version = "0.1.0"
 description = "AI-driven operations platform for OpenShift multi-cluster environments"
-readme = "README.md"
+readme = "../README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
 keywords = ["aiops", "kubernetes", "openshift", "observability", "llm"]
@@ -90,7 +90,7 @@ Source = "https://github.com/fnar/aiops-nextgen"
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-src = ["src"]
+src = ["."]
 exclude = [
     ".git",
     ".venv",
@@ -166,7 +166,7 @@ filterwarnings = [
 ]
 
 [tool.coverage.run]
-source = ["src"]
+source = ["."]
 branch = true
 omit = [
     "*/tests/*",
