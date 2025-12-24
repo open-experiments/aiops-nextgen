@@ -198,15 +198,18 @@ aiops-nextgen/
 │   ├── 08-integration-matrix.md       # Integration contracts
 │   └── 09-deployment.md               # OpenShift deployment
 ├── deploy/                      # Deployment manifests
-│   ├── helm/                   # Helm charts
-│   └── kustomize/              # Kustomize overlays
+│   ├── helm/                   # Helm charts (future)
+│   └── openshift/              # Kustomize overlays for OpenShift
 └── src/                        # Source code
-    ├── cluster-registry/
-    ├── observability-collector/
-    ├── intelligence-engine/
-    ├── realtime-streaming/
-    ├── api-gateway/
-    └── frontend/
+    ├── shared/                 # Shared Python package (models, db, redis, config)
+    ├── cluster-registry/       # Fleet management service
+    ├── observability-collector/# Metrics federation service
+    ├── intelligence-engine/    # AI/LLM service (pending)
+    ├── realtime-streaming/     # WebSocket service (pending)
+    ├── api-gateway/            # Entry point service (pending)
+    ├── frontend/               # React SPA (pending)
+    ├── docker-compose.yml      # Local development stack
+    └── development-plan.md     # Implementation roadmap
 ```
 
 ---
@@ -215,12 +218,14 @@ aiops-nextgen/
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| 1 | Specification Review | **Complete** |
-| 2 | Core Infrastructure (Registry, Collector) | Pending |
-| 3 | Intelligence Layer (LLM, Personas) | Pending |
-| 4 | Real-time & Frontend | Pending |
-| 5 | AIOps Features (Anomaly, RCA) | Pending |
-| 6 | CNF/Telco Specialization | Pending |
+| 1 | Foundation & Data Layer (shared models, PostgreSQL, Redis) | ✅ Complete |
+| 2 | Cluster Registry (fleet CRUD, health monitoring, events) | ✅ Complete |
+| 3 | Observability Collector (metrics, alerts, GPU telemetry) | ✅ Complete |
+| 4 | Intelligence Engine (LLM, personas, chat, anomaly) | Pending |
+| 5 | Real-time Streaming & API Gateway | Pending |
+| 6 | Frontend (React SPA) | Pending |
+
+See [`src/development-plan.md`](src/development-plan.md) for detailed task tracking.
 
 ---
 
@@ -236,18 +241,40 @@ aiops-nextgen/
 
 ## Quick Start
 
+### Local Development
+
 ```bash
 # Clone repository
 git clone https://github.com/open-experiments/aiops-nextgen.git
 cd aiops-nextgen
 
-# Review specifications
-ls specs/
+# Start infrastructure (PostgreSQL + Redis)
+cd src && docker-compose up -d postgresql redis
 
-# Deploy to OpenShift (after implementation)
-helm install aiops-nextgen ./deploy/helm/aiops-nextgen \
-  --namespace aiops-nextgen \
-  --create-namespace
+# Start services
+cd src/cluster-registry && uvicorn app.main:app --reload --port 8001
+cd src/observability-collector && uvicorn app.main:app --reload --port 8002
 ```
+
+### OpenShift Deployment
+
+```bash
+# Login to OpenShift
+oc login --token=<token> --server=<api-server>
+
+# Create namespace and deploy
+oc new-project aiops-nextgen
+oc apply -k deploy/openshift/
+
+# Verify deployment
+oc get pods -n aiops-nextgen
+```
+
+### API Endpoints
+
+| Service | Port | Health Check |
+|---------|------|--------------|
+| Cluster Registry | 8001 | `GET /health`, `GET /ready` |
+| Observability Collector | 8002 | `GET /health`, `GET /ready` |
 
 ---
