@@ -396,17 +396,17 @@ class LocalVLLMProvider:
 
 | Task | Spec Reference | Status |
 |------|---------------|--------|
-| Create FastAPI application scaffold | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 3 | [ ] |
-| Implement ChatSession database models | [`01-data-models.md`](../specs/01-data-models.md) Section 5.5 | [ ] |
-| Implement ChatService | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) implied | [ ] |
-| Implement LLMRouter for vLLM | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 7 | [ ] |
-| Implement ToolService | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 6 | [ ] |
-| Implement MCP tools | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 6.1 | [ ] |
-| Implement SSE streaming | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 4.6 | [ ] |
-| Add default persona | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 5.1 | [ ] |
-| Create vLLM mock for testing | - | [ ] |
-| Write unit and integration tests | - | [ ] |
-| Add to docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [ ] |
+| Create FastAPI application scaffold | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 3 | [x] |
+| Implement ChatSession database models | [`01-data-models.md`](../specs/01-data-models.md) Section 5.5 | [x] |
+| Implement ChatService | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) implied | [x] |
+| Implement LLMRouter for vLLM | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 7 | [x] |
+| Implement ToolService | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 6 | [x] |
+| Implement MCP tools | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 6.1 | [x] |
+| Implement SSE streaming | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 4.6 | [x] |
+| Add default persona | [`04-intelligence-engine.md`](../specs/04-intelligence-engine.md) Section 5.1 | [x] |
+| Create vLLM mock for testing | - | [~] |
+| Write unit and integration tests | - | [~] |
+| Add to docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [x] |
 
 **Exit Criteria:** Can create chat session, send messages, receive AI responses with tool calls executed against Observability Collector.
 
@@ -657,3 +657,4 @@ Before marking any phase complete, verify:
 | Phase 1: Foundation & Data Layer | ✅ Complete | 2024-12 |
 | Phase 2: Cluster Registry | ✅ Complete | 2024-12 |
 | Phase 3: Observability Collector | ✅ Complete | 2024-12 |
+| Phase 4: Intelligence Engine | ✅ Complete | 2024-12 |

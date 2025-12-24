@@ -134,40 +134,40 @@ services:
     networks:
       - aiops-network
 
-  # intelligence-engine:
-  #   build:
-  #     context: ..
-  #     dockerfile: src/intelligence-engine/Dockerfile
-  #   container_name: aiops-intelligence-engine
-  #   environment:
-  #     ENV: development
-  #     LOG_LEVEL: DEBUG
-  #     LOG_FORMAT: text
-  #     POSTGRES_HOST: postgres
-  #     POSTGRES_PORT: 5432
-  #     POSTGRES_USER: aiops
-  #     POSTGRES_PASSWORD: aiops_dev_password
-  #     POSTGRES_DB: aiops
-  #     REDIS_HOST: redis
-  #     REDIS_PORT: 6379
-  #     LLM_PROVIDER: local
-  #     LLM_LOCAL_URL: http://host.docker.internal:8080/v1
-  #     SERVICE_CLUSTER_REGISTRY_URL: http://cluster-registry:8080
-  #     SERVICE_OBSERVABILITY_COLLECTOR_URL: http://observability-collector:8080
-  #   ports:
-  #     - "8083:8080"
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #   networks:
-  #     - aiops-network
+  intelligence-engine:
+    build:
+      context: ..
+      dockerfile: src/intelligence-engine/Dockerfile
+    image: quay.io/fnar/aiops-nextgen:intelligence-engine-dev
+    container_name: aiops-intelligence-engine
+    environment:
+      ENV: development
+      LOG_LEVEL: DEBUG
+      LOG_FORMAT: text
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # LLM Configuration - use env var LLM_OPENAI_API_KEY
+      LLM_PROVIDER: openai
+      LLM_OPENAI_MODEL: gpt-4o
+      # LLM_OPENAI_API_KEY should be set in shell environment
+      SERVICE_CLUSTER_REGISTRY_URL: http://cluster-registry:8080
+      SERVICE_OBSERVABILITY_COLLECTOR_URL: http://observability-collector:8080
+    ports:
+      - "8003:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+      cluster-registry:
+        condition: service_healthy
+      observability-collector:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - aiops-network
 
   # realtime-streaming:
   #   build:

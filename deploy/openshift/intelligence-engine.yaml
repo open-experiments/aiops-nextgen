@@ -1,0 +1,105 @@
+# Intelligence Engine Service Deployment
+# Spec Reference: specs/04-intelligence-engine.md
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intelligence-engine
+  labels:
+    app: intelligence-engine
+    app.kubernetes.io/name: intelligence-engine
+    app.kubernetes.io/component: service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: intelligence-engine
+  template:
+    metadata:
+      labels:
+        app: intelligence-engine
+    spec:
+      containers:
+        - name: intelligence-engine
+          image: quay.io/fnar/aiops-nextgen:intelligence-engine-latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: ENV
+              value: "production"
+            - name: LOG_LEVEL
+              value: "INFO"
+            - name: LOG_FORMAT
+              value: "json"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: SERVICE_CLUSTER_REGISTRY_URL
+              value: "http://cluster-registry:8080"
+            - name: SERVICE_OBSERVABILITY_COLLECTOR_URL
+              value: "http://observability-collector:8080"
+            # LLM Configuration - OpenAI for development
+            - name: LLM_PROVIDER
+              value: "openai"
+            - name: LLM_OPENAI_MODEL
+              value: "gpt-4o"
+            - name: LLM_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: llm-secrets
+                  key: openai-api-key
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: intelligence-engine
+  labels:
+    app: intelligence-engine
+spec:
+  selector:
+    app: intelligence-engine
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: intelligence-engine
+  labels:
+    app: intelligence-engine
+spec:
+  to:
+    kind: Service
+    name: intelligence-engine
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+# Secret for LLM API keys - CREATE SEPARATELY (not in git):
+# oc create secret generic llm-secrets --from-literal=openai-api-key=YOUR_KEY -n aiops-nextgen

@@ -11,6 +11,7 @@ resources:
   - redis.yaml
   - cluster-registry.yaml
   - observability-collector.yaml
+  - intelligence-engine.yaml
 
 commonLabels:
   app.kubernetes.io/managed-by: kustomize

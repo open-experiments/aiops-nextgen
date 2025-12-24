@@ -13,7 +13,11 @@ type: Opaque
 stringData:
   POSTGRES_USER: aiops
   POSTGRES_PASSWORD: aiops_dev_password
-  POSTGRES_DB: aiops
+  POSTGRES_DATABASE: aiops
+  # Also keep the DB version for PostgreSQL container itself
+  POSTGRESQL_USER: aiops
+  POSTGRESQL_PASSWORD: aiops_dev_password
+  POSTGRESQL_DATABASE: aiops
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -98,6 +102,9 @@ spec:
             - name: data
               mountPath: /var/lib/pgsql/data
               subPath: pgdata
+            - name: init-scripts
+              mountPath: /opt/app-root/src/postgresql-start/init-db.sql
+              subPath: init-db.sql
           livenessProbe:
             exec:
               command:
@@ -122,6 +129,9 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: postgresql-data
+        - name: init-scripts
+          configMap:
+            name: postgresql-init
 ---
 apiVersion: v1
 kind: Service

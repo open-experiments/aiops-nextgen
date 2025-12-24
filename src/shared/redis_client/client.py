@@ -254,7 +254,7 @@ class RedisClient:
         self,
         service: str,
         key: str,
-        value: str | dict[str, Any] | BaseModel,
+        value: str | dict[str, Any] | list[Any] | BaseModel,
         ttl_seconds: int = 300,
     ) -> None:
         """Set cached value.
@@ -272,7 +272,7 @@ class RedisClient:
 
         if isinstance(value, BaseModel):
             serialized = value.model_dump_json()
-        elif isinstance(value, dict):
+        elif isinstance(value, (dict, list)):
             serialized = json.dumps(value, default=str)
         else:
             serialized = value

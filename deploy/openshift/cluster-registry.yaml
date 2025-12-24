@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: cluster-registry
-          image: quay.io/fnar/aiops-nextgen:cluster-registry-v0.1.0
+          image: quay.io/fnar/aiops-nextgen:cluster-registry-latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

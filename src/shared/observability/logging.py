@@ -85,8 +85,9 @@ def setup_logging(
     level = log_level or settings.log_level
     fmt = log_format or settings.log_format
 
-    # Convert LogLevel enum to logging constant
-    numeric_level = getattr(logging, level.value)
+    # Convert LogLevel enum to logging constant (handle both enum and string)
+    level_str = level.value if hasattr(level, 'value') else str(level).upper()
+    numeric_level = getattr(logging, level_str)
 
     # Configure standard library logging
     logging.basicConfig(
@@ -108,7 +109,9 @@ def setup_logging(
         structlog.processors.UnicodeDecoder(),
     ]
 
-    if fmt == LogFormat.JSON:
+    # Handle both enum and string for format
+    fmt_str = fmt.value if hasattr(fmt, 'value') else str(fmt).lower()
+    if fmt_str == "json" or fmt == LogFormat.JSON:
         # JSON format for production
         processors = shared_processors + [
             structlog.processors.format_exc_info,
