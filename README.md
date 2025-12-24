@@ -62,6 +62,3 @@ aiops-nextgen/
 3. Integration points are defined in `08-integration-matrix.md`
 4. Provide feedback before coding begins
 
-## License
-
-Apache 2.0
