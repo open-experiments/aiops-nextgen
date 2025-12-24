@@ -106,30 +106,33 @@ services:
     networks:
       - aiops-network
 
-  # observability-collector:
-  #   build:
-  #     context: ..
-  #     dockerfile: src/observability-collector/Dockerfile
-  #   container_name: aiops-observability-collector
-  #   environment:
-  #     ENV: development
-  #     LOG_LEVEL: DEBUG
-  #     LOG_FORMAT: text
-  #     REDIS_HOST: redis
-  #     REDIS_PORT: 6379
-  #     SERVICE_CLUSTER_REGISTRY_URL: http://cluster-registry:8080
-  #   ports:
-  #     - "8082:8080"
-  #   depends_on:
-  #     redis:
-  #       condition: service_healthy
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #   networks:
-  #     - aiops-network
+  observability-collector:
+    build:
+      context: ..
+      dockerfile: src/observability-collector/Dockerfile
+    image: quay.io/fnar/aiops-nextgen:observability-collector-dev
+    container_name: aiops-observability-collector
+    environment:
+      ENV: development
+      LOG_LEVEL: DEBUG
+      LOG_FORMAT: text
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_CLUSTER_REGISTRY_URL: http://cluster-registry:8080
+    ports:
+      - "8002:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+      cluster-registry:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - aiops-network
 
   # intelligence-engine:
   #   build:

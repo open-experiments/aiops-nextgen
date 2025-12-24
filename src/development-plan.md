@@ -303,17 +303,17 @@ QueryCache            # Redis-based caching (Section 7.3)
 
 | Task | Spec Reference | Status |
 |------|---------------|--------|
-| Create FastAPI application scaffold | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 3 | [ ] |
-| Implement Cluster Registry client | [`08-integration-matrix.md`](../specs/08-integration-matrix.md) Section 4.2 | [ ] |
-| Implement PrometheusCollector | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 6.1 | [ ] |
-| Implement ResultAggregator | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 7.2 | [ ] |
-| Implement QueryCache | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 7.3 | [ ] |
-| Implement AlertmanagerCollector | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 6.3 | [ ] |
-| Implement GPUCollector | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 6.2 | [ ] |
-| Publish events to Redis | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 8 | [ ] |
-| Write mock Prometheus for testing | - | [ ] |
-| Write unit and integration tests | - | [ ] |
-| Add to docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [ ] |
+| Create FastAPI application scaffold | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 3 | [x] |
+| Implement Cluster Registry client | [`08-integration-matrix.md`](../specs/08-integration-matrix.md) Section 4.2 | [x] |
+| Implement PrometheusCollector | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 6.1 | [x] |
+| Implement ResultAggregator | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 7.2 | [x] |
+| Implement QueryCache | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 7.3 | [x] |
+| Implement AlertmanagerCollector | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 6.3 | [x] |
+| Implement GPUCollector | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 6.2 | [x] |
+| Publish events to Redis | [`03-observability-collector.md`](../specs/03-observability-collector.md) Section 8 | [x] |
+| Write mock Prometheus for testing | - | [~] |
+| Write unit and integration tests | - | [~] |
+| Add to docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [x] |
 
 **Exit Criteria:** Can execute PromQL across registered clusters; GPU metrics collected; alerts received via webhook.
 
@@ -643,9 +643,17 @@ cd src/frontend && npm run dev
 
 Before marking any phase complete, verify:
 
-- [ ] All tasks reference their spec section
-- [ ] Implementation matches spec API contracts
-- [ ] Data models match [`01-data-models.md`](../specs/01-data-models.md) definitions
-- [ ] Events match [`08-integration-matrix.md`](../specs/08-integration-matrix.md) Section 5
-- [ ] Error codes match spec error handling sections
-- [ ] Configuration follows [`09-deployment.md`](../specs/09-deployment.md) patterns
+- [x] All tasks reference their spec section
+- [x] Implementation matches spec API contracts
+- [x] Data models match [`01-data-models.md`](../specs/01-data-models.md) definitions
+- [x] Events match [`08-integration-matrix.md`](../specs/08-integration-matrix.md) Section 5
+- [x] Error codes match spec error handling sections
+- [x] Configuration follows [`09-deployment.md`](../specs/09-deployment.md) patterns
+
+### Completed Phases
+
+| Phase | Status | Date |
+|-------|--------|------|
+| Phase 1: Foundation & Data Layer | ✅ Complete | 2024-12 |
+| Phase 2: Cluster Registry | ✅ Complete | 2024-12 |
+| Phase 3: Observability Collector | ✅ Complete | 2024-12 |

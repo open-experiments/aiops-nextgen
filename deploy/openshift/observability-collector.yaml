@@ -1,0 +1,107 @@
+# Observability Collector Service - OpenShift Deployment
+#
+# Spec Reference: specs/03-observability-collector.md
+# Spec Reference: specs/09-deployment.md
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: observability-collector
+  namespace: aiops-nextgen
+  labels:
+    app: observability-collector
+    app.kubernetes.io/name: observability-collector
+    app.kubernetes.io/component: observability
+    app.kubernetes.io/part-of: aiops-nextgen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: observability-collector
+  template:
+    metadata:
+      labels:
+        app: observability-collector
+    spec:
+      containers:
+        - name: observability-collector
+          image: quay.io/fnar/aiops-nextgen:observability-collector-v0.1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: ENV
+              value: "development"
+            - name: LOG_LEVEL
+              value: "DEBUG"
+            - name: LOG_FORMAT
+              value: "text"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: SERVICE_CLUSTER_REGISTRY_URL
+              value: "http://cluster-registry:8080"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+                - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: observability-collector
+  namespace: aiops-nextgen
+  labels:
+    app: observability-collector
+spec:
+  selector:
+    app: observability-collector
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: observability-collector
+  namespace: aiops-nextgen
+  labels:
+    app: observability-collector
+spec:
+  to:
+    kind: Service
+    name: observability-collector
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

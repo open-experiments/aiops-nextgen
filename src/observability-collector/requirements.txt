@@ -1,0 +1,29 @@
+# Observability Collector Service Requirements
+#
+# Spec Reference: specs/03-observability-collector.md
+
+# Web framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# HTTP client
+httpx>=0.25.0
+
+# Data validation
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Redis
+redis>=5.0.0
+
+# Async
+aiohttp>=3.9.0
+
+# Utilities
+python-multipart>=0.0.6
+
+# Logging (required by shared package)
+structlog>=23.2.0
+
+# Shared package (local)
+# -e ../shared
