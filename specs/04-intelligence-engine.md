@@ -13,7 +13,7 @@
 
 The Intelligence Engine Service provides AI-powered analysis and interaction capabilities. It handles:
 
-- Multi-provider LLM routing (local vLLM, Anthropic, OpenAI, Google)
+- Local LLM inference via vLLM (air-gapped, no external APIs)
 - Domain expert personas for specialized knowledge
 - Natural language chat with tool calling (MCP)
 - Anomaly detection on metrics
@@ -26,7 +26,7 @@ The Intelligence Engine Service provides AI-powered analysis and interaction cap
 
 | Responsibility | Description |
 |----------------|-------------|
-| **LLM Routing** | Route requests to appropriate LLM provider |
+| **LLM Routing** | Route requests to local vLLM inference server |
 | **Persona Management** | Manage and apply domain expert personas |
 | **Chat Sessions** | Maintain conversation context and history |
 | **Tool Execution** | Execute MCP tools and process results |
@@ -78,10 +78,11 @@ The Intelligence Engine Service provides AI-powered analysis and interaction cap
 │  │  ┌──────────────────────────────────────────────────────────────────┐  │ │
 │  │  │                      LLM Router                                  │  │ │
 │  │  │                                                                  │  │ │
-│  │  │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐              │  │ │
-│  │  │  │  vLLM   │  │Anthropic│  │ OpenAI  │  │ Google  │              │  │ │
-│  │  │  │ (Local) │  │ Claude  │  │  GPT    │  │ Gemini  │              │  │ │
-│  │  │  └─────────┘  └─────────┘  └─────────┘  └─────────┘              │  │ │
+│  │  │  ┌──────────────────────────────────────────────────────────┐    │  │ │
+│  │  │  │              vLLM Server (Local, Air-Gapped)             │    │  │ │
+│  │  │  │  • Llama 3.x / Mistral / Qwen (locally hosted models)    │    │  │ │
+│  │  │  │  • OpenAI-Compatible API on GPU nodes (A100/H100)        │    │  │ │
+│  │  │  └──────────────────────────────────────────────────────────┘    │  │ │
 │  │  └──────────────────────────────────────────────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
 │                                      │                                      │
@@ -754,35 +755,29 @@ tools:
 
 ## 7. LLM Router
 
-### 7.1 Provider Selection
+> **Air-Gapped Design**: This platform runs exclusively on local vLLM inference.
+> External LLM APIs (OpenAI, Anthropic, Google) are NOT supported.
+
+### 7.1 Local vLLM Provider
 
 ```python
 class LLMRouter:
-    """Routes requests to appropriate LLM provider."""
+    """Routes requests to local vLLM server (air-gapped environment)."""
 
-    PROVIDER_PATTERNS = {
-        "anthropic": ["anthropic/", "claude"],
-        "openai": ["openai/", "gpt-", "o1-"],
-        "google": ["google/", "gemini"],
-        "local": ["meta-llama/", "llama", "mistral", "qwen"]
-    }
+    SUPPORTED_MODELS = ["meta-llama/", "llama", "mistral", "qwen", "codellama"]
 
     def __init__(self, config: LLMConfig):
-        self.providers = {
-            "anthropic": AnthropicProvider(config.anthropic),
-            "openai": OpenAIProvider(config.openai),
-            "google": GoogleProvider(config.google),
-            "local": LocalVLLMProvider(config.local_vllm)
-        }
-        self.default_provider = config.default_provider
+        # Air-gapped: Only local vLLM provider
+        self.provider = LocalVLLMProvider(config.local_vllm)
 
     def get_provider(self, model_name: str) -> LLMProvider:
-        """Determine provider from model name."""
+        """Return local vLLM provider (only option in air-gapped mode)."""
+        return self.provider
+
+    def validate_model(self, model_name: str) -> bool:
+        """Validate model is available locally."""
         model_lower = model_name.lower()
-        for provider, patterns in self.PROVIDER_PATTERNS.items():
-            if any(p in model_lower for p in patterns):
-                return self.providers[provider]
-        return self.providers[self.default_provider]
+        return any(m in model_lower for m in self.SUPPORTED_MODELS)
 ```
 
 ### 7.2 Provider Interface
@@ -967,10 +962,7 @@ class Korrel8rIntegration:
 
 | Dependency | Purpose | Optional |
 |------------|---------|----------|
-| vLLM Endpoint | Local LLM inference | No (default) |
-| Anthropic API | Claude models | Yes |
-| OpenAI API | GPT models | Yes |
-| Google AI API | Gemini models | Yes |
+| vLLM Server | Local LLM inference (air-gapped) | No (required) |
 | Korrel8r | Signal correlation | Yes |
 
 ---
@@ -988,24 +980,17 @@ intelligence_engine:
 
   # LLM Configuration
   llm:
-    default_provider: "local"
+    # Air-gapped: Only local vLLM is supported
+    provider: "local"
     default_model: "meta-llama/Llama-3.2-3B-Instruct"
 
     local_vllm:
       url: "http://vllm:8080/v1"
       timeout_seconds: 120
 
-    anthropic:
-      api_key_secret: "anthropic-api-key"
-      default_model: "claude-3-5-sonnet-20241022"
-
-    openai:
-      api_key_secret: "openai-api-key"
-      default_model: "gpt-4o"
-
-    google:
-      api_key_secret: "google-ai-key"
-      default_model: "gemini-1.5-pro"
+    # Note: External LLM providers (Anthropic, OpenAI, Google) are NOT supported
+    # in air-gapped environments. Only local vLLM inference is available.
+    # Models must be pre-downloaded and loaded into the vLLM server.
 
   # Chat settings
   chat:

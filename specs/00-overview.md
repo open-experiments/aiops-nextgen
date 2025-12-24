@@ -17,27 +17,34 @@ AIOps NextGen is a cloud-native platform that unifies observability data from mu
 
 ## 2. Design Principles
 
-### 2.1 Isolation & Modularity
+### 2.1 Air-Gapped / Disconnected First
+- Designed for environments without external internet access
+- No dependencies on external cloud services (AWS, GCP, Azure)
+- All components run on-premises within the OpenShift cluster
+- Local LLM inference via vLLM (no external AI APIs)
+- Self-contained storage via MinIO or OpenShift Data Foundation
+
+### 2.2 Isolation & Modularity
 - Each component is independently deployable
 - No shared state except through defined APIs
 - Components can be scaled independently
 
-### 2.2 OpenShift-Native
+### 2.3 OpenShift-Native
 - All components run as OpenShift workloads
 - Uses OpenShift's built-in capabilities (Routes, OAuth, monitoring)
 - Integrates with OpenShift's observability stack (Prometheus, Tempo, Loki)
 
-### 2.3 Multi-Cluster First
+### 2.4 Multi-Cluster First
 - Designed for fleet management from day one
 - Hub-spoke model with centralized control plane
 - Federated queries across cluster boundaries
 
-### 2.4 AI-Augmented, Not AI-Dependent
+### 2.5 AI-Augmented, Not AI-Dependent
 - Core functionality works without LLM availability
 - AI enhances insights but doesn't block operations
 - Graceful degradation when AI services are unavailable
 
-### 2.5 Real-Time by Default
+### 2.6 Real-Time by Default
 - WebSocket-based streaming for live updates
 - Sub-second latency for critical metrics
 - Polling only as fallback mechanism

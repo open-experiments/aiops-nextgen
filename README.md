@@ -15,6 +15,13 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 
 **OpenShift Container Platform 4.16+** (x86_64, ARM64)
 
+## Design Constraints
+
+- **Air-Gapped / Disconnected**: Designed for environments without external internet access
+- **No External Cloud Services**: All components run on-premises
+- **Local LLM Only**: Uses vLLM with locally-hosted models (no OpenAI/Anthropic/Google APIs)
+- **Self-Contained Storage**: MinIO or OpenShift Data Foundation for object storage
+
 ---
 
 ## Solution Architecture
@@ -76,17 +83,17 @@ AIOps NextGen is a unified observability and intelligence platform that provides
                                       │
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                            EXTERNAL INTEGRATIONS                                     │
+│                          ON-PREMISES INTEGRATIONS                                    │
 │                                                                                      │
 │  ┌─────────────────────────────────────┐  ┌─────────────────────────────────────┐   │
-│  │         SPOKE CLUSTERS              │  │         LLM PROVIDERS               │   │
+│  │         SPOKE CLUSTERS              │  │      LOCAL LLM (Air-Gapped)         │   │
 │  │                                     │  │                                     │   │
-│  │  ┌─────────┐ ┌─────────┐ ┌───────┐  │  │  ┌─────────┐ ┌─────────┐ ┌───────┐  │   │
-│  │  │Promethe.│ │ Tempo   │ │ Loki  │  │  │  │  vLLM   │ │Anthropic│ │OpenAI │  │   │
-│  │  │ Metrics │ │ Traces  │ │ Logs  │  │  │  │ (Local) │ │ Claude  │ │  GPT  │  │   │
-│  │  └─────────┘ └─────────┘ └───────┘  │  │  └─────────┘ └─────────┘ └───────┘  │   │
-│  │                                     │  │                                     │   │
-│  │  100+ OCP Clusters (Hub-Spoke)      │  │  + Google Gemini (Fallback Chain)   │   │
+│  │  ┌─────────┐ ┌─────────┐ ┌───────┐  │  │  ┌─────────────────────────────────┐│   │
+│  │  │Promethe.│ │ Tempo   │ │ Loki  │  │  │  │           vLLM Server           ││   │
+│  │  │ Metrics │ │ Traces  │ │ Logs  │  │  │  │  • Llama 3.x / Mistral / Qwen   ││   │
+│  │  └─────────┘ └─────────┘ └───────┘  │  │  │  • GPU Accelerated (A100/H100)  ││   │
+│  │                                     │  │  │  • OpenAI-Compatible API        ││   │
+│  │  100+ OCP Clusters (Hub-Spoke)      │  │  └─────────────────────────────────┘│   │
 │  └─────────────────────────────────────┘  └─────────────────────────────────────┘   │
 │                                                                                      │
 └─────────────────────────────────────────────────────────────────────────────────────┘
@@ -166,7 +173,7 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 | **Frontend** | React 18, TypeScript, Vite, Tailwind | Modern SPA |
 | **Gateway** | FastAPI, OpenShift OAuth | Auth, routing, rate limiting |
 | **Services** | Python 3.11+, FastAPI, SQLAlchemy | Microservices |
-| **AI/LLM** | vLLM, Anthropic, OpenAI, Google | LLM inference |
+| **AI/LLM** | vLLM (local only, air-gapped) | LLM inference |
 | **Data** | PostgreSQL 15, Redis 7, MinIO | Persistence, cache, objects |
 | **Observability** | OpenTelemetry, Prometheus, Tempo, Loki | Telemetry |
 | **Deployment** | Helm, Kustomize, OpenShift 4.16+ | Container orchestration |
