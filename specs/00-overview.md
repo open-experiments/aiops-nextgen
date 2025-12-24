@@ -17,11 +17,12 @@ AIOps NextGen is a cloud-native platform that unifies observability data from mu
 
 ## 2. Design Principles
 
-### 2.1 Air-Gapped / Disconnected First
-- Designed for environments without external internet access
-- No dependencies on external cloud services (AWS, GCP, Azure)
+### 2.1 Air-Gapped Ready / On-Premises First
+- Designed to work in environments without external internet access
+- No dependencies on external cloud services (AWS, GCP, Azure) for core functionality
 - All components run on-premises within the OpenShift cluster
-- Local LLM inference via vLLM (no external AI APIs)
+- Local LLM inference via vLLM is the primary/preferred option
+- External AI APIs (Gemini, Claude, ChatGPT) supported as optional alternative for connected environments
 - Self-contained storage via MinIO or OpenShift Data Foundation
 
 ### 2.2 Isolation & Modularity

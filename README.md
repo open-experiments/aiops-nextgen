@@ -15,11 +15,11 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 
 **OpenShift Container Platform 4.16+** (x86_64, ARM64)
 
-## Design Constraints
+## Design Principles
 
-- **Air-Gapped / Disconnected**: Designed for environments without external internet access
-- **No External Cloud Services**: All components run on-premises
-- **Local LLM Only**: Uses vLLM with locally-hosted models (no OpenAI/Anthropic/Google APIs)
+- **Air-Gapped Ready**: Designed to work in environments without external internet access
+- **On-Premises First**: All core components run on-premises within OpenShift
+- **Local LLM Preferred**: Primary AI via vLLM with locally-hosted models (Llama, Mistral, Qwen); external AI APIs (Gemini, Claude, ChatGPT) supported as optional alternative
 - **Self-Contained Storage**: MinIO or OpenShift Data Foundation for object storage
 
 ---
@@ -86,7 +86,7 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 │                          ON-PREMISES INTEGRATIONS                                   │
 │                                                                                     │
 │  ┌──────────────────────────────────────┐  ┌─────────────────────────────────────┐  │
-│  │         SPOKE CLUSTERS               │  │      LOCAL LLM (Air-Gapped)         │  │
+│  │         SPOKE CLUSTERS               │  │      LLM INFERENCE                  │  │
 │  │                                      │  │                                     │  │
 │  │  ┌──────────┐ ┌─────────┐ ┌───────┐  │  │  ┌─────────────────────────────────┐│  │
 │  │  │Prometheus│ │ Tempo   │ │ Loki  │  │  │  │           vLLM Server           ││  │
@@ -128,7 +128,7 @@ AIOps NextGen is a unified observability and intelligence platform that provides
                     │ SSE Stream                          ▼
                     │                              ┌─────────────┐
                     │                              │ LLM Provider│
-                    │                              │ (vLLM/Cloud)│
+                    │                              │(vLLM/ExtAPI)│
                     │                              └──────┬──────┘
                     │                                     │
                     │           Tool Calls                ▼
@@ -173,7 +173,7 @@ AIOps NextGen is a unified observability and intelligence platform that provides
 | **Frontend** | React 18, TypeScript, Vite, Tailwind | Modern SPA |
 | **Gateway** | FastAPI, OpenShift OAuth | Auth, routing, rate limiting |
 | **Services** | Python 3.11+, FastAPI, SQLAlchemy | Microservices |
-| **AI/LLM** | vLLM (local only, air-gapped) | LLM inference |
+| **AI/LLM** | vLLM (preferred); Gemini/Claude/ChatGPT (optional) | LLM inference |
 | **Data** | PostgreSQL 15, Redis 7, MinIO | Persistence, cache, objects |
 | **Observability** | OpenTelemetry, Prometheus, Tempo, Loki | Telemetry |
 | **Deployment** | Helm, Kustomize, OpenShift 4.16+ | Container orchestration |
