@@ -37,41 +37,41 @@ This document specifies the deployment architecture for AIOps NextGen on OpenShi
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                            aiops-nextgen                                     │
-│                         (Main Application)                                   │
+│                            aiops-nextgen                                    │
+│                         (Main Application)                                  │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Deployments:                                                                │
-│  • api-gateway                                                               │
-│  • cluster-registry                                                          │
-│  • observability-collector                                                   │
-│  • intelligence-engine                                                       │
-│  • realtime-streaming                                                        │
-│  • frontend                                                                  │
-│                                                                              │
-│  StatefulSets:                                                               │
-│  • postgresql                                                                │
-│  • redis                                                                     │
-│                                                                              │
+│  Deployments:                                                               │
+│  • api-gateway                                                              │
+│  • cluster-registry                                                         │
+│  • observability-collector                                                  │
+│  • intelligence-engine                                                      │
+│  • realtime-streaming                                                       │
+│  • frontend                                                                 │
+│                                                                             │
+│  StatefulSets:                                                              │
+│  • postgresql                                                               │
+│  • redis                                                                    │
+│                                                                             │
 │  Services, ConfigMaps, Secrets, Routes                                      │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         aiops-nextgen-llm                                    │
-│                        (Optional: Local LLM)                                 │
+│                         aiops-nextgen-llm                                   │
+│                        (Optional: Local LLM)                                │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Deployments:                                                                │
+│  Deployments:                                                               │
 │  • vllm-inference                                                           │
-│                                                                              │
+│                                                                             │
 │  InferenceService (if using KServe)                                         │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                      aiops-nextgen-storage                                   │
-│                       (Object Storage)                                       │
+│                      aiops-nextgen-storage                                  │
+│                       (Object Storage)                                      │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Deployments:                                                                │
+│  Deployments:                                                               │
 │  • minio (if not using ODF)                                                 │
-│                                                                              │
+│                                                                             │
 │  ObjectBucketClaim (if using ODF)                                           │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
