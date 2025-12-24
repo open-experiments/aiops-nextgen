@@ -252,7 +252,3 @@ helm install aiops-nextgen ./deploy/helm/aiops-nextgen \
 ```
 
 ---
-
-## License
-
-MIT License - see [LICENSE](LICENSE) for details.
