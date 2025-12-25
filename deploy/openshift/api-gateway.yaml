@@ -1,0 +1,105 @@
+---
+# API Gateway Deployment
+# Spec Reference: specs/06-api-gateway.md
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: api-gateway
+    app.kubernetes.io/part-of: aiops-nextgen
+data:
+  ENV: "development"
+  LOG_LEVEL: "DEBUG"
+  LOG_FORMAT: "json"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  SERVICE_CLUSTER_REGISTRY_URL: "http://cluster-registry:8080"
+  SERVICE_OBSERVABILITY_COLLECTOR_URL: "http://observability-collector:8080"
+  SERVICE_INTELLIGENCE_ENGINE_URL: "http://intelligence-engine:8080"
+  SERVICE_REALTIME_STREAMING_URL: "http://realtime-streaming:8080"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: api-gateway
+    app.kubernetes.io/part-of: aiops-nextgen
+    app.kubernetes.io/version: "0.1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: api-gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: api-gateway
+        app.kubernetes.io/part-of: aiops-nextgen
+    spec:
+      containers:
+        - name: api-gateway
+          image: quay.io/fnar/aiops-nextgen:api-gateway-latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef:
+                name: api-gateway-config
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: api-gateway
+    app.kubernetes.io/part-of: aiops-nextgen
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+  selector:
+    app.kubernetes.io/name: api-gateway
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: api-gateway
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: api-gateway
+    app.kubernetes.io/part-of: aiops-nextgen
+spec:
+  to:
+    kind: Service
+    name: api-gateway
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

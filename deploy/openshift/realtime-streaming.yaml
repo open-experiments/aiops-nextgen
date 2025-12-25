@@ -1,0 +1,101 @@
+---
+# Real-Time Streaming Deployment
+# Spec Reference: specs/05-realtime-streaming.md
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: realtime-streaming-config
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: realtime-streaming
+    app.kubernetes.io/part-of: aiops-nextgen
+data:
+  ENV: "development"
+  LOG_LEVEL: "DEBUG"
+  LOG_FORMAT: "json"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: realtime-streaming
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: realtime-streaming
+    app.kubernetes.io/part-of: aiops-nextgen
+    app.kubernetes.io/version: "0.1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: realtime-streaming
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: realtime-streaming
+        app.kubernetes.io/part-of: aiops-nextgen
+    spec:
+      containers:
+        - name: realtime-streaming
+          image: quay.io/fnar/aiops-nextgen:realtime-streaming-latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef:
+                name: realtime-streaming-config
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: realtime-streaming
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: realtime-streaming
+    app.kubernetes.io/part-of: aiops-nextgen
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+  selector:
+    app.kubernetes.io/name: realtime-streaming
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: realtime-streaming
+  namespace: aiops-nextgen
+  labels:
+    app.kubernetes.io/name: realtime-streaming
+    app.kubernetes.io/part-of: aiops-nextgen
+spec:
+  to:
+    kind: Service
+    name: realtime-streaming
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

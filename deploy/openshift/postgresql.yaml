@@ -97,7 +97,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: postgresql-credentials
-                  key: POSTGRES_DB
+                  key: POSTGRES_DATABASE
           volumeMounts:
             - name: data
               mountPath: /var/lib/pgsql/data

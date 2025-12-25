@@ -49,6 +49,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     app.state.db_engine = engine
     app.state.session_factory = session_factory
 
+    # Create tables if they don't exist
+    from shared.database import Base
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    logger.info("Database tables initialized")
+
     # Initialize Redis
     redis_client = RedisClient(settings.redis.url)
     await redis_client.connect()

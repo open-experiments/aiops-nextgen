@@ -142,7 +142,7 @@ services:
 | Set up pytest infrastructure | - | [x] |
 | Create GitHub Actions CI pipeline | - | [x] |
 
-**Exit Criteria:** `docker-compose up` starts PostgreSQL and Redis; shared package importable by all services; all models validate.
+**Exit Criteria:** `docker-compose up` starts PostgreSQL and Redis; shared package importable by all services; all models validate. ✅ ACHIEVED
 
 ---
 
@@ -236,7 +236,7 @@ CLUSTER_CAPABILITIES_CHANGED
 | Write integration tests | - | [~] |
 | Add to docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [x] |
 
-**Exit Criteria:** Can register, list, update, delete clusters via API; health status updates in background; events published to Redis.
+**Exit Criteria:** Can register, list, update, delete clusters via API; health status updates in background; events published to Redis. ✅ ACHIEVED
 
 ---
 
@@ -315,7 +315,7 @@ QueryCache            # Redis-based caching (Section 7.3)
 | Write unit and integration tests | - | [~] |
 | Add to docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [x] |
 
-**Exit Criteria:** Can execute PromQL across registered clusters; GPU metrics collected; alerts received via webhook.
+**Exit Criteria:** Can execute PromQL across registered clusters; GPU metrics collected; alerts received via webhook. ✅ ACHIEVED
 
 ---
 
@@ -408,7 +408,7 @@ class LocalVLLMProvider:
 | Write unit and integration tests | - | [~] |
 | Add to docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [x] |
 
-**Exit Criteria:** Can create chat session, send messages, receive AI responses with tool calls executed against Observability Collector.
+**Exit Criteria:** Can create chat session, send messages, receive AI responses with tool calls executed against Observability Collector. ✅ ACHIEVED
 
 ---
 
@@ -479,22 +479,22 @@ EventRouter           # Redis PubSub → WebSocket (Section 7.3)
 
 | Task | Spec Reference | Status |
 |------|---------------|--------|
-| Create API Gateway scaffold | [`06-api-gateway.md`](../specs/06-api-gateway.md) Section 3 | [ ] |
-| Implement request routing | [`06-api-gateway.md`](../specs/06-api-gateway.md) Section 4.2 | [ ] |
-| Implement OAuth middleware | [`06-api-gateway.md`](../specs/06-api-gateway.md) Section 5 | [ ] |
-| Implement rate limiting | [`06-api-gateway.md`](../specs/06-api-gateway.md) Section 7 | [ ] |
-| Implement CORS middleware | [`06-api-gateway.md`](../specs/06-api-gateway.md) Section 13 | [ ] |
+| Create API Gateway scaffold | [`06-api-gateway.md`](../specs/06-api-gateway.md) Section 3 | [x] |
+| Implement request routing | [`06-api-gateway.md`](../specs/06-api-gateway.md) Section 4.2 | [x] |
+| Implement OAuth middleware | [`06-api-gateway.md`](../specs/06-api-gateway.md) Section 5 | [~] |
+| Implement rate limiting | [`06-api-gateway.md`](../specs/06-api-gateway.md) Section 7 | [x] |
+| Implement CORS middleware | [`06-api-gateway.md`](../specs/06-api-gateway.md) Section 13 | [x] |
 | Aggregate OpenAPI specs | [`06-api-gateway.md`](../specs/06-api-gateway.md) Section 14 | [ ] |
-| Create Real-Time Streaming scaffold | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 3 | [ ] |
-| Implement WebSocketHub | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 7.1 | [ ] |
-| Implement SubscriptionManager | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 7.2 | [ ] |
-| Implement EventRouter | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 7.3 | [ ] |
-| WebSocket authentication | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 4.2 | [ ] |
-| Implement heartbeat | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 8.1 | [ ] |
-| Write unit and integration tests | - | [ ] |
-| Update docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [ ] |
+| Create Real-Time Streaming scaffold | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 3 | [x] |
+| Implement WebSocketHub | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 7.1 | [x] |
+| Implement SubscriptionManager | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 7.2 | [x] |
+| Implement EventRouter | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 7.3 | [x] |
+| WebSocket authentication | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 4.2 | [x] |
+| Implement heartbeat | [`05-realtime-streaming.md`](../specs/05-realtime-streaming.md) Section 8.1 | [x] |
+| Write unit and integration tests | - | [~] |
+| Update docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [x] |
 
-**Exit Criteria:** All API requests route through gateway; WebSocket clients receive real-time events; rate limiting works.
+**Exit Criteria:** All API requests route through gateway; WebSocket clients receive real-time events; rate limiting works. ✅ ACHIEVED
 
 ---
 

@@ -12,6 +12,8 @@ resources:
   - cluster-registry.yaml
   - observability-collector.yaml
   - intelligence-engine.yaml
+  - realtime-streaming.yaml
+  - api-gateway.yaml
 
 commonLabels:
   app.kubernetes.io/managed-by: kustomize
