@@ -205,8 +205,8 @@ aiops-nextgen/
     ├── cluster-registry/       # Fleet management service
     ├── observability-collector/# Metrics federation service
     ├── intelligence-engine/    # AI/LLM service
-    ├── realtime-streaming/     # WebSocket service (pending)
-    ├── api-gateway/            # Entry point service (pending)
+    ├── realtime-streaming/     # WebSocket service
+    ├── api-gateway/            # Entry point service
     ├── frontend/               # React SPA (pending)
     ├── docker-compose.yml      # Local development stack
     └── development-plan.md     # Implementation roadmap
@@ -222,7 +222,7 @@ aiops-nextgen/
 | 2 | Cluster Registry (fleet CRUD, health monitoring, events) | ✅ Complete |
 | 3 | Observability Collector (metrics, alerts, GPU telemetry) | ✅ Complete |
 | 4 | Intelligence Engine (LLM, personas, chat, tool calling) | ✅ Complete |
-| 5 | Real-time Streaming & API Gateway | Pending |
+| 5 | Real-time Streaming & API Gateway | ✅ Complete |
 | 6 | Frontend (React SPA) | Pending |
 
 See [`src/development-plan.md`](src/development-plan.md) for detailed task tracking.
@@ -255,6 +255,8 @@ cd src && docker-compose up -d postgresql redis
 cd src/cluster-registry && uvicorn app.main:app --reload --port 8001
 cd src/observability-collector && uvicorn app.main:app --reload --port 8002
 cd src/intelligence-engine && uvicorn app.main:app --reload --port 8003
+cd src/realtime-streaming && uvicorn app.main:app --reload --port 8004
+cd src/api-gateway && uvicorn app.main:app --reload --port 8000
 ```
 
 ### OpenShift Deployment
@@ -275,8 +277,10 @@ oc get pods -n aiops-nextgen
 
 | Service | Port | Health Check |
 |---------|------|--------------|
+| API Gateway | 8000 | `GET /health`, `GET /ready` |
 | Cluster Registry | 8001 | `GET /health`, `GET /ready` |
 | Observability Collector | 8002 | `GET /health`, `GET /ready` |
 | Intelligence Engine | 8003 | `GET /health`, `GET /ready` |
+| Real-Time Streaming | 8004 | `GET /health`, `GET /ready` |
 
 ---
