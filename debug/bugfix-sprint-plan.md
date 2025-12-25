@@ -1,6 +1,6 @@
 # Sprint Development Plan
 
-This document organizes the identified issues into logical development sprints. Issues are grouped by coupling and dependencies to enable incremental delivery.
+This document organizes the identified issues (listed in debug/issues.md) into logical development sprints. Issues are grouped by coupling and dependencies to enable incremental delivery.
 
 ---
 
