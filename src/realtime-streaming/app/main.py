@@ -6,8 +6,9 @@ Spec Reference: specs/05-realtime-streaming.md Section 3
 from __future__ import annotations
 
 import asyncio
+import contextlib
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,7 +18,9 @@ from shared.observability import get_logger
 from shared.redis_client import RedisClient
 
 from .api import health, streaming, websocket
+from .services.backpressure import backpressure_handler
 from .services.event_router import EventRouter
+from .services.heartbeat import heartbeat_manager
 from .services.hub import WebSocketHub
 from .services.subscriptions import SubscriptionManager
 
@@ -58,18 +61,22 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     router_task = asyncio.create_task(event_router.start())
     app.state.router_task = router_task
 
+    # Start heartbeat manager
+    await heartbeat_manager.start()
+    app.state.heartbeat_manager = heartbeat_manager
+    app.state.backpressure_handler = backpressure_handler
+
     logger.info("Real-Time Streaming service ready")
 
     yield
 
     # Cleanup
     logger.info("Shutting down Real-Time Streaming service")
+    await heartbeat_manager.stop()
     await event_router.stop()
     router_task.cancel()
-    try:
+    with contextlib.suppress(asyncio.CancelledError):
         await router_task
-    except asyncio.CancelledError:
-        pass
     await redis.close()
 
 

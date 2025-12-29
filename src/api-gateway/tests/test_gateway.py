@@ -1,8 +1,7 @@
 """Tests for API Gateway service."""
 
-import pytest
 
-from app.api.proxy import get_backend_for_path, ROUTE_MAP
+from app.api.proxy import get_backend_for_path
 
 
 class TestRouteMapping:

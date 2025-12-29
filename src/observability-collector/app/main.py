@@ -5,8 +5,8 @@ Spec Reference: specs/03-observability-collector.md Section 3
 
 from __future__ import annotations
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,7 +15,7 @@ from shared.config import get_settings
 from shared.observability import get_logger
 from shared.redis_client import RedisClient
 
-from .api import alerts, gpu, health, metrics
+from .api import alerts, cnf, gpu, health, logs, metrics, traces
 from .clients.cluster_registry import ClusterRegistryClient
 
 logger = get_logger(__name__)
@@ -78,8 +78,11 @@ def create_app() -> FastAPI:
     # Include routers
     app.include_router(health.router, tags=["Health"])
     app.include_router(metrics.router, prefix="/api/v1", tags=["Metrics"])
+    app.include_router(logs.router, tags=["Logs"])
+    app.include_router(traces.router, tags=["Traces"])
     app.include_router(alerts.router, prefix="/api/v1", tags=["Alerts"])
     app.include_router(gpu.router, prefix="/api/v1", tags=["GPU"])
+    app.include_router(cnf.router, prefix="/api/v1", tags=["CNF"])
 
     return app
 

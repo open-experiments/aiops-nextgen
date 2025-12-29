@@ -18,7 +18,7 @@ from shared.config import get_settings
 from shared.observability import get_logger
 from shared.redis_client import RedisClient
 
-from .api import health, proxy
+from .api import health, proxy, websocket_proxy
 from .middleware.oauth import oauth_middleware
 from .middleware.rate_limit import RateLimitMiddleware
 
@@ -138,6 +138,7 @@ def create_app() -> FastAPI:
     # Include routers
     app.include_router(health.router, tags=["Health"])
     app.include_router(proxy.router, tags=["Proxy"])
+    app.include_router(websocket_proxy.router, tags=["WebSocket"])
 
     return app
 

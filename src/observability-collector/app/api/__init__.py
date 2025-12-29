@@ -3,6 +3,6 @@
 Spec Reference: specs/03-observability-collector.md Section 4
 """
 
-from . import alerts, gpu, health, metrics
+from . import alerts, cnf, gpu, health, logs, metrics, traces
 
-__all__ = ["alerts", "gpu", "health", "metrics"]
+__all__ = ["alerts", "cnf", "gpu", "health", "logs", "metrics", "traces"]
