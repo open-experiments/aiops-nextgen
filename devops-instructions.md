@@ -1,6 +1,6 @@
-# AIOps NextGen - Execution Instructions
+# AIOps NextGen - DevOps Instructions
 
-> **This document is the authoritative guide for all development work on the AIOps NextGen platform. Follow these instructions precisely for consistent, high-quality implementation.**
+> **This document is the authoritative guide for all development work on the AIOps NextGen platform. Follow these instructions precisely for consistent, high-quality development, integration and test process.**
 
 ---
 
