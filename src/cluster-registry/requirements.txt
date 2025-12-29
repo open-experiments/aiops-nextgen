@@ -23,6 +23,12 @@ structlog>=24.1.0,<25.0.0
 # HTTP client
 httpx>=0.26.0,<0.30.0
 
+# Cryptography for credential encryption
+cryptography>=42.0.0,<43.0.0
+
+# Kubernetes client
+kubernetes>=29.0.0,<30.0.0
+
 # Testing
 pytest>=8.0.0,<9.0.0
 pytest-asyncio>=0.23.0,<1.0.0
