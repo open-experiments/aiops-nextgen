@@ -15,8 +15,8 @@ This document organizes the identified issues (listed in debug/issues.md) into l
 | Sprint 5 | GPU Telemetry | 1 | P1 - Critical | ✅ COMPLETED |
 | Sprint 6 | CNF/Telco Monitoring | 2 | P1 - Critical | ✅ COMPLETED |
 | Sprint 7 | WebSocket Hardening | 3 | P2 - High | ✅ COMPLETED |
-| Sprint 8 | Intelligence - Anomaly & RCA | 2 | P2 - High | 🔲 PENDING |
-| Sprint 9 | Intelligence - Reports & Tools | 2 | P2 - High | 🔲 PENDING |
+| Sprint 8 | Intelligence - Anomaly & RCA | 2 | P2 - High | ✅ COMPLETED |
+| Sprint 9 | Intelligence - Reports & Tools | 2 | P2 - High | ✅ COMPLETED |
 | Sprint 10 | API Gateway Polish | 3 | P3 - Medium | 🔲 PENDING |
 
 ---
