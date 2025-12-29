@@ -10,7 +10,7 @@ import json
 from typing import Any
 
 from shared.observability import get_logger
-from shared.redis_client import RedisClient, RedisDB
+from shared.redis_client import RedisClient
 
 from .hub import WebSocketHub
 from .subscriptions import SubscriptionManager

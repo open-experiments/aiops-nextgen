@@ -1,7 +1,6 @@
 """Tests for Real-Time Streaming service."""
 
 import pytest
-
 from app.services.hub import WebSocketHub
 from app.services.subscriptions import SubscriptionManager
 

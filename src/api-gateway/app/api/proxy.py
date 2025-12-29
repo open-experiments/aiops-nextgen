@@ -6,7 +6,6 @@ Spec Reference: specs/06-api-gateway.md Section 4.2
 from __future__ import annotations
 
 from fastapi import APIRouter, Request, Response
-from fastapi.responses import StreamingResponse
 
 from shared.observability import get_logger
 
