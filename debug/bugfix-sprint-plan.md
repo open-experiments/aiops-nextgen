@@ -17,7 +17,7 @@ This document organizes the identified issues (listed in debug/issues.md) into l
 | Sprint 7 | WebSocket Hardening | 3 | P2 - High | ✅ COMPLETED |
 | Sprint 8 | Intelligence - Anomaly & RCA | 2 | P2 - High | ✅ COMPLETED |
 | Sprint 9 | Intelligence - Reports & Tools | 2 | P2 - High | ✅ COMPLETED |
-| Sprint 10 | API Gateway Polish | 3 | P3 - Medium | 🔲 PENDING |
+| Sprint 10 | API Gateway Polish | 3 | P3 - Medium | ✅ COMPLETED |
 
 ---
 
@@ -35,10 +35,13 @@ This document organizes the identified issues (listed in debug/issues.md) into l
 - Sprint 5 (GPU Telemetry): ✅ Completed
 - Sprint 6 (CNF Monitoring): ✅ Completed
 
-### Track C: WebSocket & Intelligence - IN PROGRESS
+### Track C: WebSocket & Intelligence - COMPLETED
 - Sprint 7 (WebSocket Hardening): ✅ Completed
-- Sprint 8 (Anomaly & RCA): 🔲 Pending
-- Sprint 9 (Reports & MCP Tools): 🔲 Pending
+- Sprint 8 (Anomaly & RCA): ✅ Completed
+- Sprint 9 (Reports & MCP Tools): ✅ Completed
+
+### Track D: API Gateway Polish - COMPLETED
+- Sprint 10 (API Gateway Polish): ✅ Completed
 
 ### Deployment Status
 - **Sandbox Cluster:** sandbox01.narlabs.io

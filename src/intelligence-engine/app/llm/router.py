@@ -10,10 +10,11 @@ from __future__ import annotations
 
 from typing import Any, AsyncIterator
 
-from shared.config import LLMSettings, LLMProvider as ProviderType
+from shared.config import LLMProvider as ProviderType
+from shared.config import LLMSettings
 from shared.observability import get_logger
 
-from .providers import LLMProvider, OpenAIProvider, LocalVLLMProvider
+from .providers import LLMProvider, LocalVLLMProvider, OpenAIProvider
 
 logger = get_logger(__name__)
 

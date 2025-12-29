@@ -15,7 +15,6 @@ from typing import Any, AsyncIterator
 
 from openai import AsyncOpenAI
 
-from shared.config import LLMSettings, LLMProvider as ProviderType
 from shared.observability import get_logger
 
 logger = get_logger(__name__)
@@ -191,9 +190,8 @@ class OpenAIProvider(LLMProvider):
                             "name": tc.function.name if tc.function else "",
                             "arguments": "",
                         }
-                    if tc.function and tc.function.arguments:
-                        if tc.index in tool_calls_buffer:
-                            tool_calls_buffer[tc.index]["arguments"] += tc.function.arguments
+                    if tc.function and tc.function.arguments and tc.index in tool_calls_buffer:
+                        tool_calls_buffer[tc.index]["arguments"] += tc.function.arguments
 
             # Check for finish
             if chunk.choices[0].finish_reason:

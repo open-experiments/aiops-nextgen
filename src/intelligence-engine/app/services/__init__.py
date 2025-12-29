@@ -3,8 +3,9 @@
 Spec Reference: specs/04-intelligence-engine.md Section 3
 """
 
-from .anomaly_detection import AnomalyDetector, anomaly_detector, DetectionMethod, MetricData
-from .rca import RootCauseAnalyzer, rca_analyzer, RootCause
+from .anomaly_detection import AnomalyDetector, DetectionMethod, MetricData, anomaly_detector
+from .chat_persistence import ChatPersistenceService, check_database_health
+from .rca import RootCause, RootCauseAnalyzer, rca_analyzer
 from .reports import ReportGenerator, report_generator
 
 __all__ = [
@@ -12,6 +13,8 @@ __all__ = [
     "anomaly_detector",
     "DetectionMethod",
     "MetricData",
+    "ChatPersistenceService",
+    "check_database_health",
     "RootCauseAnalyzer",
     "rca_analyzer",
     "RootCause",

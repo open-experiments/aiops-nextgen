@@ -6,10 +6,14 @@ Spec Reference: specs/06-api-gateway.md Section 12
 from __future__ import annotations
 
 import time
+from typing import Any
 
 from fastapi import APIRouter, Request
 
+from shared.observability import get_logger
+
 router = APIRouter()
+logger = get_logger(__name__)
 
 # Track service start time
 _start_time = time.time()
@@ -113,6 +117,10 @@ async def health_detailed(request: Request):
     except Exception as e:
         components["redis"] = {"status": "unhealthy", "error": str(e)}
 
+    # Check PostgreSQL
+    postgres_health = await _check_postgres_health(request)
+    components["postgresql"] = postgres_health
+
     all_healthy = all(
         c.get("status") == "healthy" for c in components.values()
     )
@@ -120,4 +128,47 @@ async def health_detailed(request: Request):
     return {
         "status": "healthy" if all_healthy else "degraded",
         "components": components,
+        "uptime_seconds": int(time.time() - _start_time),
     }
+
+
+async def _check_postgres_health(request: Request) -> dict[str, Any]:
+    """Check PostgreSQL health via intelligence-engine.
+
+    The API Gateway doesn't connect to PostgreSQL directly.
+    Instead, it checks via the intelligence-engine service.
+    """
+    http_client = request.app.state.http_client
+    backends = request.app.state.backends
+
+    # Check intelligence-engine which manages PostgreSQL
+    intelligence_url = backends.get("intelligence-engine")
+    if not intelligence_url:
+        return {"status": "unknown", "message": "Intelligence engine URL not configured"}
+
+    try:
+        start = time.time()
+        response = await http_client.get(
+            f"{intelligence_url}/health/db",
+            timeout=5.0,
+        )
+        latency_ms = int((time.time() - start) * 1000)
+
+        if response.status_code == 200:
+            data = response.json()
+            return {
+                "status": data.get("status", "healthy"),
+                "latency_ms": latency_ms,
+            }
+        else:
+            return {
+                "status": "unhealthy",
+                "latency_ms": latency_ms,
+                "error": f"HTTP {response.status_code}",
+            }
+    except Exception as e:
+        logger.debug("PostgreSQL health check failed", error=str(e))
+        return {
+            "status": "unknown",
+            "message": "Health check endpoint not available",
+        }

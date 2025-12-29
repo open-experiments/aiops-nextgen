@@ -21,6 +21,8 @@ from shared.redis_client import RedisClient
 from .api import health, proxy, websocket_proxy
 from .middleware.oauth import oauth_middleware
 from .middleware.rate_limit import RateLimitMiddleware
+from .middleware.tracing import TracingMiddleware
+from .middleware.validation import RequestValidationMiddleware
 
 logger = get_logger(__name__)
 
@@ -134,6 +136,14 @@ def create_app() -> FastAPI:
     # Rate limiting middleware
     # Spec Reference: specs/06-api-gateway.md Section 7
     app.add_middleware(RateLimitMiddleware)
+
+    # Request validation middleware
+    # Spec Reference: specs/06-api-gateway.md Section 5
+    app.add_middleware(RequestValidationMiddleware)
+
+    # Distributed tracing middleware (outermost - first to process)
+    # Spec Reference: specs/06-api-gateway.md Section 10
+    app.add_middleware(TracingMiddleware)
 
     # Include routers
     app.include_router(health.router, tags=["Health"])
