@@ -819,7 +819,6 @@ SQLALCHEMY_ECHO=true python -m uvicorn main:app
 - [Sprint Index](debug/sprint/README.md)
 
 ### Development
-- [Claude AI Context](CLAUDE.md)
 - [Main README](README.md)
 
 ---
