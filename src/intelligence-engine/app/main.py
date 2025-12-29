@@ -16,7 +16,7 @@ from shared.config import IntelligenceEngineSettings
 from shared.observability import get_logger, setup_logging
 from shared.redis_client import RedisClient
 
-from .api import chat, health, personas
+from .api import anomaly, chat, health, personas, reports
 from .llm.router import LLMRouter
 from .services.chat import ChatService
 from .services.personas import PersonaService
@@ -32,10 +32,20 @@ async def lifespan(app: FastAPI):
 
     # Setup logging
     setup_logging(log_level=settings.log_level, log_format=settings.log_format)
+    env_val = (
+        settings.environment.value
+        if hasattr(settings.environment, "value")
+        else settings.environment
+    )
+    llm_val = (
+        settings.llm.provider.value
+        if hasattr(settings.llm.provider, "value")
+        else settings.llm.provider
+    )
     logger.info(
         "Starting Intelligence Engine",
-        environment=settings.environment.value if hasattr(settings.environment, 'value') else settings.environment,
-        llm_provider=settings.llm.provider.value if hasattr(settings.llm.provider, 'value') else settings.llm.provider,
+        environment=env_val,
+        llm_provider=llm_val,
     )
 
     # Initialize Redis
@@ -98,6 +108,8 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(chat.router)
     app.include_router(personas.router)
+    app.include_router(anomaly.router)
+    app.include_router(reports.router)
 
     return app
 
