@@ -11,6 +11,7 @@ from typing import Any
 
 import httpx
 
+from shared.config import get_settings
 from shared.observability import get_logger
 
 logger = get_logger(__name__)
@@ -23,9 +24,14 @@ class PrometheusCollector:
     """
 
     def __init__(self):
+        self.settings = get_settings()
+        # Create client with SSL verification based on settings
+        # In sandbox/development mode, we may skip TLS verification
+        verify = not self.settings.is_development
         self.client = httpx.AsyncClient(
             timeout=httpx.Timeout(30.0, connect=5.0),
             follow_redirects=True,
+            verify=verify,
         )
 
     async def query(
@@ -97,7 +103,7 @@ class PrometheusCollector:
                 "data": self._parse_result(result),
             }
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return {
                 "cluster_id": str(cluster["id"]),
                 "cluster_name": cluster["name"],
@@ -193,7 +199,7 @@ class PrometheusCollector:
                 "data": self._parse_result(result),
             }
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return {
                 "cluster_id": str(cluster["id"]),
                 "cluster_name": cluster["name"],
@@ -251,9 +257,25 @@ class PrometheusCollector:
 
     def _get_auth_headers(self, cluster: dict) -> dict[str, str]:
         """Get authentication headers for cluster."""
-        # In a real implementation, this would get the token from credentials
-        # For now, return empty headers
-        return {}
+        headers = {}
+
+        # First check if cluster has a token in credentials
+        credentials = cluster.get("credentials", {})
+        token = credentials.get("token")
+
+        # For sandbox/development, use the pod's service account token
+        # if querying the same cluster
+        if not token and self.settings.is_development:
+            try:
+                with open("/var/run/secrets/kubernetes.io/serviceaccount/token") as f:
+                    token = f.read().strip()
+            except FileNotFoundError:
+                pass
+
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+
+        return headers
 
     def _parse_result(self, result: dict) -> list[dict]:
         """Parse Prometheus result into standard format."""

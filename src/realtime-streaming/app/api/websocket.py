@@ -9,9 +9,12 @@ import json
 from datetime import datetime
 from uuid import uuid4
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketException
 
+from shared.config import get_settings
 from shared.observability import get_logger
+
+from ..middleware.ws_auth import authenticate_websocket
 
 router = APIRouter()
 logger = get_logger(__name__)
@@ -24,20 +27,37 @@ async def websocket_endpoint(websocket: WebSocket):
     Spec Reference: specs/05-realtime-streaming.md Section 4.1
 
     Protocol:
-    1. Client connects
-    2. Client sends auth message (optional in dev mode)
+    1. Client connects with authentication token
+    2. Server validates token before accepting
     3. Client subscribes to event types
     4. Server sends events matching subscriptions
     5. Ping/pong for keepalive
     """
+    settings = get_settings()
     hub = websocket.app.state.hub
     subscription_manager = websocket.app.state.subscription_manager
 
-    # Generate client ID
-    client_id = str(uuid4())
+    # Authenticate before accepting connection
+    # Skip authentication if OAuth is not configured (development mode)
+    user = None
+    if settings.oauth.issuer:
+        try:
+            user = await authenticate_websocket(websocket)
+        except WebSocketException as e:
+            await websocket.close(code=e.code, reason=e.reason)
+            return
 
-    # Accept connection
+    # Generate client ID (use user_id if authenticated)
+    client_id = user.sub if user else str(uuid4())
+
+    # Accept connection after successful authentication
     await websocket.accept()
+
+    # Store user context for authorization checks
+    if user:
+        websocket.state.user_id = user.sub
+        websocket.state.username = user.preferred_username
+        websocket.state.groups = user.groups
 
     # Register with hub
     await hub.connect(websocket, client_id)
@@ -45,6 +65,8 @@ async def websocket_endpoint(websocket: WebSocket):
     logger.info(
         "WebSocket client connected",
         client_id=client_id,
+        authenticated=user is not None,
+        username=user.preferred_username if user else None,
     )
 
     try:
@@ -105,11 +127,13 @@ async def handle_message(
     msg_type = message.get("type")
 
     if msg_type == "auth":
-        # For MVP, accept any auth (in production, validate token)
+        # Authentication is now done at connection time
+        # This message type is kept for backward compatibility
         await websocket.send_json({
             "type": "auth_response",
             "status": "authenticated",
             "client_id": client_id,
+            "message": "Authentication validated at connection time",
         })
 
     elif msg_type == "subscribe":

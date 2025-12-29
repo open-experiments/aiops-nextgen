@@ -64,6 +64,9 @@ class AuthType(str, Enum):
     KUBECONFIG = "KUBECONFIG"
     SERVICE_ACCOUNT = "SERVICE_ACCOUNT"
     OIDC = "OIDC"
+    TOKEN = "TOKEN"  # Bearer token
+    BASIC = "BASIC"  # Basic auth (username/password)
+    CERTIFICATE = "CERTIFICATE"  # Client certificate
 
 
 class CNFType(str, Enum):
@@ -102,6 +105,7 @@ class ClusterCapabilities(AIOpsBaseModel):
     Spec Reference: Section 2.3
     """
 
+    has_gpu: bool = False  # Short alias for has_gpu_nodes
     has_gpu_nodes: bool = False
     gpu_count: int = Field(default=0, ge=0)
     gpu_types: list[str] = Field(default_factory=list)
@@ -170,6 +174,28 @@ class Cluster(AIOpsBaseModel):
 
 class ClusterCredentials(AIOpsBaseModel):
     """Cluster access credentials (stored encrypted, never returned via API).
+
+    Spec Reference: Section 2.5
+    """
+
+    auth_type: AuthType
+    # Token-based auth
+    token: str | None = Field(default=None, description="Bearer token for API access")
+    # Basic auth
+    username: str | None = Field(default=None, description="Username for basic auth")
+    password: str | None = Field(default=None, description="Password for basic auth")
+    # Certificate auth
+    client_cert: str | None = Field(default=None, description="Client certificate PEM")
+    client_key: str | None = Field(default=None, description="Client key PEM")
+    # Kubeconfig
+    kubeconfig: str | None = Field(default=None, description="Full kubeconfig content")
+    # TLS settings
+    skip_tls_verify: bool = Field(default=False, description="Skip TLS verification")
+    ca_cert: str | None = Field(default=None, description="CA certificate PEM")
+
+
+class ClusterCredentialsStored(AIOpsBaseModel):
+    """Stored cluster credentials with metadata (internal use only).
 
     Spec Reference: Section 2.5
     """

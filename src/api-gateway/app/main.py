@@ -5,19 +5,21 @@ Spec Reference: specs/06-api-gateway.md Section 3
 
 from __future__ import annotations
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 import httpx
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from shared.config import get_settings
 from shared.observability import get_logger
 from shared.redis_client import RedisClient
 
 from .api import health, proxy
+from .middleware.oauth import oauth_middleware
 from .middleware.rate_limit import RateLimitMiddleware
 
 logger = get_logger(__name__)
@@ -68,6 +70,40 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     await redis.close()
 
 
+class AuthenticationMiddleware(BaseHTTPMiddleware):
+    """Global authentication middleware.
+
+    Spec Reference: specs/06-api-gateway.md Section 3.1
+
+    Validates OAuth tokens for all requests except health endpoints.
+    Skips authentication if OAuth is not configured (development mode).
+    """
+
+    async def dispatch(self, request: Request, call_next):
+        """Process request through authentication."""
+        settings = get_settings()
+
+        # Skip authentication for certain paths
+        skip_paths = ["/health", "/ready", "/metrics", "/docs", "/openapi.json", "/redoc"]
+
+        if request.url.path in skip_paths:
+            return await call_next(request)
+
+        # Skip authentication if OAuth is not configured (development mode)
+        if not settings.oauth.issuer:
+            return await call_next(request)
+
+        try:
+            await oauth_middleware(request)
+        except HTTPException as e:
+            return JSONResponse(
+                status_code=e.status_code,
+                content={"detail": e.detail},
+            )
+
+        return await call_next(request)
+
+
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
     settings = get_settings()
@@ -90,6 +126,10 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Authentication middleware (OAuth 2.0)
+    # Spec Reference: specs/06-api-gateway.md Section 3.1
+    app.add_middleware(AuthenticationMiddleware)
 
     # Rate limiting middleware
     # Spec Reference: specs/06-api-gateway.md Section 7
