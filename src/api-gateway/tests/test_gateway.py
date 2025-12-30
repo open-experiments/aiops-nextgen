@@ -1,6 +1,5 @@
 """Tests for API Gateway service."""
 
-
 from app.api.proxy import get_backend_for_path
 
 

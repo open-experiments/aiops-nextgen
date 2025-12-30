@@ -14,14 +14,14 @@ from shared.redis_client import RedisClient
 
 from ..repositories.cluster_repository import ClusterRepository
 from ..schemas.cluster import (
-    ClusterCreateRequest,
-    ClusterUpdateRequest,
-    ClusterResponse,
-    ClusterListResponse,
-    ClusterFilters,
-    ClusterStatus,
     ClusterCapabilities,
+    ClusterCreateRequest,
     ClusterEndpoints,
+    ClusterFilters,
+    ClusterListResponse,
+    ClusterResponse,
+    ClusterStatus,
+    ClusterUpdateRequest,
 )
 from ..schemas.fleet import FleetSummary
 from .event_service import EventService
@@ -63,9 +63,7 @@ class ClusterService:
         # Check if cluster with same name exists
         existing = await self.repository.get_by_name(request.name)
         if existing:
-            raise ClusterAlreadyExistsError(
-                f"Cluster with name '{request.name}' already exists"
-            )
+            raise ClusterAlreadyExistsError(f"Cluster with name '{request.name}' already exists")
 
         # Prepare cluster data
         cluster_data = {
@@ -92,9 +90,7 @@ class ClusterService:
         logger.info("Cluster registered", cluster_id=str(cluster.id), name=cluster.name)
 
         # Publish event
-        await self.event_service.publish_cluster_registered(
-            self._to_response(cluster)
-        )
+        await self.event_service.publish_cluster_registered(self._to_response(cluster))
 
         return self._to_response(cluster)
 
@@ -135,9 +131,7 @@ class ClusterService:
             total_pages=total_pages,
         )
 
-    async def update(
-        self, cluster_id: UUID, request: ClusterUpdateRequest
-    ) -> ClusterResponse:
+    async def update(self, cluster_id: UUID, request: ClusterUpdateRequest) -> ClusterResponse:
         """Update cluster metadata.
 
         Spec Reference: specs/02-cluster-registry.md Section 5.1
@@ -168,9 +162,7 @@ class ClusterService:
         logger.info("Cluster updated", cluster_id=str(cluster_id))
 
         # Publish event
-        await self.event_service.publish_cluster_updated(
-            self._to_response(cluster)
-        )
+        await self.event_service.publish_cluster_updated(self._to_response(cluster))
 
         return self._to_response(cluster)
 
@@ -231,9 +223,7 @@ class ClusterService:
             region=cluster.region,
             environment=cluster.environment,
             status=ClusterStatus(**status_data),
-            capabilities=ClusterCapabilities(**capabilities_data)
-            if capabilities_data
-            else None,
+            capabilities=ClusterCapabilities(**capabilities_data) if capabilities_data else None,
             endpoints=ClusterEndpoints(**endpoints_data),
             labels=cluster.labels or {},
             created_at=cluster.created_at,

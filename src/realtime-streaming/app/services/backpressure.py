@@ -75,10 +75,12 @@ class MessageBuffer:
             if self.drop_policy == "oldest":
                 # deque with maxlen automatically drops oldest
                 was_full = len(self._buffer) >= self.max_size
-                self._buffer.append({
-                    "data": message,
-                    "queued_at": datetime.now(UTC),
-                })
+                self._buffer.append(
+                    {
+                        "data": message,
+                        "queued_at": datetime.now(UTC),
+                    }
+                )
                 if was_full:
                     self._messages_dropped += 1
                     logger.debug(
@@ -99,10 +101,12 @@ class MessageBuffer:
                     )
                     return False
 
-                self._buffer.append({
-                    "data": message,
-                    "queued_at": datetime.now(UTC),
-                })
+                self._buffer.append(
+                    {
+                        "data": message,
+                        "queued_at": datetime.now(UTC),
+                    }
+                )
                 return True
 
     async def get(self) -> dict[str, Any] | None:
@@ -141,11 +145,7 @@ class MessageBuffer:
         Returns:
             ConsumerMetrics for this buffer
         """
-        avg_latency = (
-            sum(self._latencies) / len(self._latencies)
-            if self._latencies
-            else 0
-        )
+        avg_latency = sum(self._latencies) / len(self._latencies) if self._latencies else 0
 
         return ConsumerMetrics(
             connection_id=self.connection_id,

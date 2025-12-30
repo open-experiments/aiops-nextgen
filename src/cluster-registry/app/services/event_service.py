@@ -9,9 +9,9 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID, uuid4
 
+from shared.models.events import Event, EventType
 from shared.observability import get_logger
 from shared.redis_client import RedisClient
-from shared.models.events import Event, EventType
 
 logger = get_logger(__name__)
 

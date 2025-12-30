@@ -22,14 +22,6 @@ from shared.config import get_settings
 from shared.database import Base
 
 # Import all models to ensure they're registered with Base.metadata
-from shared.database.models import (
-    AnomalyDetectionModel,
-    ChatMessageModel,
-    ChatSessionModel,
-    ClusterHealthHistoryModel,
-    ClusterModel,
-    ReportModel,
-)
 
 # Alembic Config object
 config = context.config

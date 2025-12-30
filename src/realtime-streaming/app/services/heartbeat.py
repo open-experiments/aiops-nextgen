@@ -203,10 +203,12 @@ class HeartbeatManager:
 
                     # Send ping
                     try:
-                        await ws.send_json({
-                            "type": "ping",
-                            "timestamp": now.isoformat(),
-                        })
+                        await ws.send_json(
+                            {
+                                "type": "ping",
+                                "timestamp": now.isoformat(),
+                            }
+                        )
                         state.last_ping_sent = now
                         state.last_pong_received = None
 

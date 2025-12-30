@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-from datetime import datetime, timedelta
 from uuid import uuid4
 
 from app.collectors.gpu_collector import GPUCollector

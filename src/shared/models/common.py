@@ -6,7 +6,6 @@ Spec Reference: specs/01-data-models.md Section 8 - Common Types
 import re
 from datetime import datetime
 from typing import Any, Generic, TypeVar
-from uuid import UUID
 
 from pydantic import Field, field_validator
 
@@ -22,9 +21,7 @@ class PaginationParams(AIOpsBaseModel):
     """
 
     page: int = Field(default=1, ge=1, description="Page number (1-indexed)")
-    page_size: int = Field(
-        default=20, ge=1, le=100, description="Items per page (max 100)"
-    )
+    page_size: int = Field(default=20, ge=1, le=100, description="Items per page (max 100)")
 
 
 class PaginatedResponse(AIOpsBaseModel, Generic[T]):
@@ -70,10 +67,6 @@ class ErrorResponse(AIOpsBaseModel):
 
     error_code: str = Field(description="Machine-readable error code")
     message: str = Field(description="Human-readable error message")
-    details: dict[str, Any] | None = Field(
-        default=None, description="Additional error context"
-    )
-    trace_id: str | None = Field(
-        default=None, description="Request trace ID for debugging"
-    )
+    details: dict[str, Any] | None = Field(default=None, description="Additional error context")
+    trace_id: str | None = Field(default=None, description="Request trace ID for debugging")
     timestamp: datetime = Field(default_factory=datetime.utcnow)

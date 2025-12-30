@@ -13,15 +13,15 @@ The Cluster Registry Service provides:
 from __future__ import annotations
 
 import asyncio
-from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager, suppress
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from shared.config import ClusterRegistrySettings
 from shared.database import create_engine, create_session_factory
-from shared.observability import setup_logging, get_logger
+from shared.observability import get_logger, setup_logging
 from shared.redis_client import RedisClient
 
 from .api import clusters, fleet, health
@@ -51,6 +51,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     # Create tables if they don't exist
     from shared.database import Base
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     logger.info("Database tables initialized")
@@ -73,10 +74,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Shutdown
     logger.info("Shutting down Cluster Registry service")
     health_task.cancel()
-    try:
+    with suppress(asyncio.CancelledError):
         await health_task
-    except asyncio.CancelledError:
-        pass
     await redis_client.disconnect()
     await engine.dispose()
     logger.info("Cluster Registry service shutdown complete")

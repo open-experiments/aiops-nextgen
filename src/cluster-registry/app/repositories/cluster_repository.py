@@ -9,10 +9,11 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import func, select, and_, or_, Integer, literal_column, text
+from sqlalchemy import and_, func, or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database.models import ClusterModel, ClusterHealthHistoryModel
+from shared.database.models import ClusterHealthHistoryModel, ClusterModel
+
 from ..schemas.cluster import ClusterFilters
 
 
@@ -51,14 +52,10 @@ class ClusterRepository:
 
         Spec Reference: specs/02-cluster-registry.md Section 4.1
         """
-        result = await self.session.execute(
-            select(ClusterModel).where(ClusterModel.name == name)
-        )
+        result = await self.session.execute(select(ClusterModel).where(ClusterModel.name == name))
         return result.scalar_one_or_none()
 
-    async def list(
-        self, filters: ClusterFilters
-    ) -> tuple[list[ClusterModel], int]:
+    async def list(self, filters: ClusterFilters) -> tuple[list[ClusterModel], int]:
         """List clusters with filtering and pagination.
 
         Spec Reference: specs/02-cluster-registry.md Section 4.3
@@ -76,14 +73,10 @@ class ClusterRepository:
         if filters.region:
             conditions.append(ClusterModel.region == filters.region)
         if filters.state:
-            conditions.append(
-                ClusterModel.status["state"].astext == filters.state.value
-            )
+            conditions.append(ClusterModel.status["state"].astext == filters.state.value)
         if filters.has_gpu is not None:
             if filters.has_gpu:
-                conditions.append(
-                    ClusterModel.capabilities["has_gpu_nodes"].astext == "true"
-                )
+                conditions.append(ClusterModel.capabilities["has_gpu_nodes"].astext == "true")
             else:
                 conditions.append(
                     or_(
@@ -93,9 +86,7 @@ class ClusterRepository:
                 )
         if filters.has_cnf is not None:
             if filters.has_cnf:
-                conditions.append(
-                    ClusterModel.capabilities["has_cnf_workloads"].astext == "true"
-                )
+                conditions.append(ClusterModel.capabilities["has_cnf_workloads"].astext == "true")
             else:
                 conditions.append(
                     or_(
@@ -127,9 +118,7 @@ class ClusterRepository:
 
         return clusters, total
 
-    async def update(
-        self, cluster_id: UUID, data: dict[str, Any]
-    ) -> ClusterModel | None:
+    async def update(self, cluster_id: UUID, data: dict[str, Any]) -> ClusterModel | None:
         """Update a cluster.
 
         Spec Reference: specs/02-cluster-registry.md Section 5.1
@@ -160,9 +149,7 @@ class ClusterRepository:
         await self.session.commit()
         return True
 
-    async def update_status(
-        self, cluster_id: UUID, status: dict[str, Any]
-    ) -> ClusterModel | None:
+    async def update_status(self, cluster_id: UUID, status: dict[str, Any]) -> ClusterModel | None:
         """Update cluster status.
 
         Spec Reference: specs/02-cluster-registry.md Section 5.4
@@ -221,9 +208,7 @@ class ClusterRepository:
         Spec Reference: specs/02-cluster-registry.md Section 4.2 - Fleet Summary
         """
         # Total clusters
-        total_result = await self.session.execute(
-            select(func.count()).select_from(ClusterModel)
-        )
+        total_result = await self.session.execute(select(func.count()).select_from(ClusterModel))
         total = total_result.scalar() or 0
 
         # By state - use raw SQL to avoid SQLAlchemy JSONB GROUP BY issues

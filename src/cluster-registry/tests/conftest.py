@@ -4,17 +4,14 @@ Spec Reference: specs/02-cluster-registry.md
 """
 
 import asyncio
-from typing import AsyncGenerator
-from uuid import uuid4
+from collections.abc import AsyncGenerator
 
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from shared.database import Base
-from shared.redis_client import RedisClient
-
 
 # Use SQLite for testing
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
@@ -130,7 +127,5 @@ def sample_cluster_data():
         "region": "us-east-1",
         "environment": "DEVELOPMENT",
         "labels": {"team": "platform", "env": "test"},
-        "endpoints": {
-            "prometheus_url": "https://prometheus.test-cluster-01.example.com:9090"
-        },
+        "endpoints": {"prometheus_url": "https://prometheus.test-cluster-01.example.com:9090"},
     }

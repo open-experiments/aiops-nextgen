@@ -157,14 +157,16 @@ class CredentialStore:
 
         # Build secret data
         # Handle both enum and string auth_type
-        auth_type_value = credentials.auth_type.value if hasattr(credentials.auth_type, "value") else str(credentials.auth_type)
+        auth_type_value = (
+            credentials.auth_type.value
+            if hasattr(credentials.auth_type, "value")
+            else str(credentials.auth_type)
+        )
         secret_data = {
             "auth_type": base64.b64encode(auth_type_value.encode()).decode(),
             "encrypted_data": base64.b64encode(encrypted_data.encode()).decode(),
             "nonce": base64.b64encode(nonce.encode()).decode(),
-            "created_at": base64.b64encode(
-                datetime.now(UTC).isoformat().encode()
-            ).decode(),
+            "created_at": base64.b64encode(datetime.now(UTC).isoformat().encode()).decode(),
         }
 
         # Create or update secret

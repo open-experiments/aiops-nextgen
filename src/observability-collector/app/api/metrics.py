@@ -89,7 +89,7 @@ async def query_metrics(request: Request, query_request: MetricQueryRequest):
         return results
     except Exception as e:
         logger.error("Metric query failed", error=str(e), query=query_request.query)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post(
@@ -120,7 +120,7 @@ async def query_range_metrics(request: Request, query_request: MetricRangeQueryR
         return results
     except Exception as e:
         logger.error("Range query failed", error=str(e), query=query_request.query)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get(
@@ -148,4 +148,4 @@ async def get_labels(
         return {"labels": labels}
     except Exception as e:
         logger.error("Get labels failed", error=str(e))
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

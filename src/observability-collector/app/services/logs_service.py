@@ -53,33 +53,34 @@ class LogsService:
         if cluster_id:
             cluster = await self.cluster_registry.get_cluster(cluster_id)
             if not cluster:
-                return [{
-                    "cluster_id": cluster_id,
-                    "cluster_name": "unknown",
-                    "status": "ERROR",
-                    "error": "Cluster not found",
-                    "result_type": None,
-                    "data": [],
-                }]
+                return [
+                    {
+                        "cluster_id": cluster_id,
+                        "cluster_name": "unknown",
+                        "status": "ERROR",
+                        "error": "Cluster not found",
+                        "result_type": None,
+                        "data": [],
+                    }
+                ]
             clusters = [cluster]
         else:
             clusters = await self.cluster_registry.list_online_clusters()
 
         # Filter to clusters with Loki configured
-        loki_clusters = [
-            c for c in clusters
-            if c.get("endpoints", {}).get("loki_url")
-        ]
+        loki_clusters = [c for c in clusters if c.get("endpoints", {}).get("loki_url")]
 
         if not loki_clusters:
-            return [{
-                "cluster_id": cluster_id or "all",
-                "cluster_name": "N/A",
-                "status": "ERROR",
-                "error": "No clusters with Loki configured",
-                "result_type": None,
-                "data": [],
-            }]
+            return [
+                {
+                    "cluster_id": cluster_id or "all",
+                    "cluster_name": "N/A",
+                    "status": "ERROR",
+                    "error": "No clusters with Loki configured",
+                    "result_type": None,
+                    "data": [],
+                }
+            ]
 
         # Execute queries concurrently
         tasks = [
@@ -99,14 +100,16 @@ class LogsService:
         processed = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
-                processed.append({
-                    "cluster_id": str(loki_clusters[i]["id"]),
-                    "cluster_name": loki_clusters[i]["name"],
-                    "status": "ERROR",
-                    "error": str(result),
-                    "result_type": None,
-                    "data": [],
-                })
+                processed.append(
+                    {
+                        "cluster_id": str(loki_clusters[i]["id"]),
+                        "cluster_name": loki_clusters[i]["name"],
+                        "status": "ERROR",
+                        "error": str(result),
+                        "result_type": None,
+                        "data": [],
+                    }
+                )
             else:
                 processed.append(result)
 
@@ -139,32 +142,33 @@ class LogsService:
         if cluster_id:
             cluster = await self.cluster_registry.get_cluster(cluster_id)
             if not cluster:
-                return [{
-                    "cluster_id": cluster_id,
-                    "cluster_name": "unknown",
-                    "status": "ERROR",
-                    "error": "Cluster not found",
-                    "result_type": None,
-                    "data": [],
-                }]
+                return [
+                    {
+                        "cluster_id": cluster_id,
+                        "cluster_name": "unknown",
+                        "status": "ERROR",
+                        "error": "Cluster not found",
+                        "result_type": None,
+                        "data": [],
+                    }
+                ]
             clusters = [cluster]
         else:
             clusters = await self.cluster_registry.list_online_clusters()
 
-        loki_clusters = [
-            c for c in clusters
-            if c.get("endpoints", {}).get("loki_url")
-        ]
+        loki_clusters = [c for c in clusters if c.get("endpoints", {}).get("loki_url")]
 
         if not loki_clusters:
-            return [{
-                "cluster_id": cluster_id or "all",
-                "cluster_name": "N/A",
-                "status": "ERROR",
-                "error": "No clusters with Loki configured",
-                "result_type": None,
-                "data": [],
-            }]
+            return [
+                {
+                    "cluster_id": cluster_id or "all",
+                    "cluster_name": "N/A",
+                    "status": "ERROR",
+                    "error": "No clusters with Loki configured",
+                    "result_type": None,
+                    "data": [],
+                }
+            ]
 
         tasks = [
             self.collector.query_range(
@@ -184,14 +188,16 @@ class LogsService:
         processed = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
-                processed.append({
-                    "cluster_id": str(loki_clusters[i]["id"]),
-                    "cluster_name": loki_clusters[i]["name"],
-                    "status": "ERROR",
-                    "error": str(result),
-                    "result_type": None,
-                    "data": [],
-                })
+                processed.append(
+                    {
+                        "cluster_id": str(loki_clusters[i]["id"]),
+                        "cluster_name": loki_clusters[i]["name"],
+                        "status": "ERROR",
+                        "error": str(result),
+                        "result_type": None,
+                        "data": [],
+                    }
+                )
             else:
                 processed.append(result)
 
@@ -214,10 +220,7 @@ class LogsService:
         else:
             clusters = await self.cluster_registry.list_online_clusters()
 
-        loki_clusters = [
-            c for c in clusters
-            if c.get("endpoints", {}).get("loki_url")
-        ]
+        loki_clusters = [c for c in clusters if c.get("endpoints", {}).get("loki_url")]
 
         if not loki_clusters:
             return []
@@ -255,18 +258,12 @@ class LogsService:
         else:
             clusters = await self.cluster_registry.list_online_clusters()
 
-        loki_clusters = [
-            c for c in clusters
-            if c.get("endpoints", {}).get("loki_url")
-        ]
+        loki_clusters = [c for c in clusters if c.get("endpoints", {}).get("loki_url")]
 
         if not loki_clusters:
             return []
 
-        tasks = [
-            self.collector.get_label_values(c, label)
-            for c in loki_clusters
-        ]
+        tasks = [self.collector.get_label_values(c, label) for c in loki_clusters]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         # Merge values from all clusters

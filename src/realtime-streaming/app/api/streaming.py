@@ -55,11 +55,13 @@ async def list_clients(request: Request):
 
     clients = []
     for client_id, info in hub.get_clients().items():
-        clients.append({
-            "client_id": client_id,
-            "connected_at": info.get("connected_at"),
-            "subscriptions": info.get("subscriptions", []),
-        })
+        clients.append(
+            {
+                "client_id": client_id,
+                "connected_at": info.get("connected_at"),
+                "subscriptions": info.get("subscriptions", []),
+            }
+        )
 
     return {"clients": clients, "total": len(clients)}
 

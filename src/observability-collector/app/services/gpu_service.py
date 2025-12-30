@@ -5,8 +5,6 @@ Spec Reference: specs/03-observability-collector.md Section 5.5
 
 from __future__ import annotations
 
-import json
-from datetime import datetime
 from typing import Any
 from uuid import UUID
 
@@ -152,20 +150,20 @@ class GPUService:
         for node in nodes:
             for gpu in node.get("gpus", []):
                 for proc in gpu.get("processes", []):
-                    processes.append({
-                        "cluster_id": node.get("cluster_id"),
-                        "cluster_name": node.get("cluster_name"),
-                        "node_name": node.get("node_name"),
-                        "gpu_index": gpu.get("index"),
-                        "gpu_name": gpu.get("name"),
-                        **proc,
-                    })
+                    processes.append(
+                        {
+                            "cluster_id": node.get("cluster_id"),
+                            "cluster_name": node.get("cluster_name"),
+                            "node_name": node.get("node_name"),
+                            "gpu_index": gpu.get("index"),
+                            "gpu_name": gpu.get("name"),
+                            **proc,
+                        }
+                    )
 
         return processes
 
-    async def _get_gpu_clusters(
-        self, cluster_ids: list[UUID] | None = None
-    ) -> list[dict]:
+    async def _get_gpu_clusters(self, cluster_ids: list[UUID] | None = None) -> list[dict]:
         """Get clusters with GPU capability."""
         try:
             if cluster_ids:
@@ -181,9 +179,7 @@ class GPUService:
                 # Get all clusters with GPU
                 all_clusters = await self.cluster_registry.list_online_clusters()
                 return [
-                    c
-                    for c in all_clusters
-                    if (c.get("capabilities") or {}).get("has_gpu_nodes")
+                    c for c in all_clusters if (c.get("capabilities") or {}).get("has_gpu_nodes")
                 ]
         except Exception as e:
             logger.error("Failed to get GPU clusters", error=str(e))

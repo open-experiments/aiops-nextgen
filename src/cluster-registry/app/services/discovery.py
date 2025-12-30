@@ -141,9 +141,7 @@ class DiscoveryService:
                         endpoint = f"http://{service_name}.{namespace}.svc:{port}"
 
                         # Try to get version
-                        version = await self._get_prometheus_version(
-                            client, endpoint, headers
-                        )
+                        version = await self._get_prometheus_version(client, endpoint, headers)
 
                         return DiscoveredComponent(
                             name="prometheus",
@@ -369,7 +367,9 @@ class DiscoveryService:
     ) -> ClusterEndpoints:
         """Build ClusterEndpoints from discovered components."""
         return ClusterEndpoints(
-            prometheus_url=prometheus.endpoint if prometheus.status == ComponentStatus.DISCOVERED else None,
+            prometheus_url=prometheus.endpoint
+            if prometheus.status == ComponentStatus.DISCOVERED
+            else None,
             loki_url=loki.endpoint if loki.status == ComponentStatus.DISCOVERED else None,
             tempo_url=tempo.endpoint if tempo.status == ComponentStatus.DISCOVERED else None,
         )

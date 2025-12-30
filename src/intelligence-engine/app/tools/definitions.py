@@ -489,14 +489,14 @@ FLEET_TOOLS = [
 
 # All tools combined
 TOOLS = (
-    CLUSTER_TOOLS +
-    METRICS_TOOLS +
-    ALERT_TOOLS +
-    LOGS_TOOLS +
-    GPU_TOOLS +
-    ANOMALY_TOOLS +
-    REPORT_TOOLS +
-    FLEET_TOOLS
+    CLUSTER_TOOLS
+    + METRICS_TOOLS
+    + ALERT_TOOLS
+    + LOGS_TOOLS
+    + GPU_TOOLS
+    + ANOMALY_TOOLS
+    + REPORT_TOOLS
+    + FLEET_TOOLS
 )
 
 # Tool count summary
@@ -526,8 +526,7 @@ def get_tools_for_persona(capabilities: list[str]) -> list[dict]:
     return [
         tool
         for tool in TOOLS
-        if tool["function"]["name"] in capabilities
-        or tool["function"]["name"] in tool_names
+        if tool["function"]["name"] in capabilities or tool["function"]["name"] in tool_names
     ]
 
 

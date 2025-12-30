@@ -11,7 +11,7 @@ from typing import Any
 from uuid import UUID, uuid4
 
 from shared.models.events import Event, EventType
-from shared.models.observability import Alert, AlertSeverity, AlertState
+from shared.models.observability import AlertSeverity, AlertState
 from shared.observability import get_logger
 from shared.redis_client import RedisClient, RedisDB
 
@@ -59,9 +59,7 @@ class AlertsService:
                 alert = alert_data
 
             # Filter by cluster
-            if cluster_ids and alert.get("cluster_id") not in [
-                str(c) for c in cluster_ids
-            ]:
+            if cluster_ids and alert.get("cluster_id") not in [str(c) for c in cluster_ids]:
                 continue
 
             # Filter by state
@@ -129,9 +127,7 @@ class AlertsService:
 
             # Publish event
             event_type = (
-                EventType.ALERT_FIRED
-                if alert["state"] == "FIRING"
-                else EventType.ALERT_RESOLVED
+                EventType.ALERT_FIRED if alert["state"] == "FIRING" else EventType.ALERT_RESOLVED
             )
 
             event = Event(

@@ -7,8 +7,9 @@ from __future__ import annotations
 
 import json
 import time
+from collections.abc import AsyncIterator
 from datetime import datetime, timedelta
-from typing import Any, AsyncIterator
+from typing import Any
 from uuid import UUID, uuid4
 
 from shared.models.intelligence import (
@@ -198,32 +199,38 @@ class ChatService:
 
                     tool_result = ToolResult(
                         tool_call_id=tc["id"],
-                        status=ToolResultStatus.SUCCESS if "error" not in result else ToolResultStatus.ERROR,
+                        status=ToolResultStatus.SUCCESS
+                        if "error" not in result
+                        else ToolResultStatus.ERROR,
                         result=result if "error" not in result else None,
                         error=result.get("error"),
                     )
                     tool_results.append(tool_result)
 
                     # Add to messages for next iteration
-                    messages.append({
-                        "role": "assistant",
-                        "content": response.get("content", ""),
-                        "tool_calls": [
-                            {
-                                "id": tc["id"],
-                                "type": "function",
-                                "function": {
-                                    "name": tc["name"],
-                                    "arguments": json.dumps(tc["arguments"]),
-                                },
-                            }
-                        ],
-                    })
-                    messages.append({
-                        "role": "tool",
-                        "tool_call_id": tc["id"],
-                        "content": json.dumps(result),
-                    })
+                    messages.append(
+                        {
+                            "role": "assistant",
+                            "content": response.get("content", ""),
+                            "tool_calls": [
+                                {
+                                    "id": tc["id"],
+                                    "type": "function",
+                                    "function": {
+                                        "name": tc["name"],
+                                        "arguments": json.dumps(tc["arguments"]),
+                                    },
+                                }
+                            ],
+                        }
+                    )
+                    messages.append(
+                        {
+                            "role": "tool",
+                            "tool_call_id": tc["id"],
+                            "content": json.dumps(result),
+                        }
+                    )
             else:
                 # No tool calls, we have final response
                 response_content = response.get("content", "")
@@ -339,13 +346,19 @@ class ChatService:
 
                     tool_result = ToolResult(
                         tool_call_id=tc["id"],
-                        status=ToolResultStatus.SUCCESS if "error" not in result else ToolResultStatus.ERROR,
+                        status=ToolResultStatus.SUCCESS
+                        if "error" not in result
+                        else ToolResultStatus.ERROR,
                         result=result if "error" not in result else None,
                         error=result.get("error"),
                     )
                     tool_results.append(tool_result)
 
-                    status_str = tool_result.status.value if hasattr(tool_result.status, 'value') else str(tool_result.status)
+                    status_str = (
+                        tool_result.status.value
+                        if hasattr(tool_result.status, "value")
+                        else str(tool_result.status)
+                    )
                     yield {
                         "type": "tool_result",
                         "tool_call_id": tc["id"],
@@ -409,10 +422,12 @@ class ChatService:
 
         # Add system prompt
         system_prompt = self.persona_service.get_system_prompt(session.persona_id)
-        messages.append({
-            "role": "system",
-            "content": system_prompt,
-        })
+        messages.append(
+            {
+                "role": "system",
+                "content": system_prompt,
+            }
+        )
 
         # Add context about clusters if specified
         if session.cluster_context:
@@ -421,18 +436,24 @@ class ChatService:
 
         # Add message history (limited)
         history = await self.get_messages(session.id)
-        for msg in history[-self.MAX_CONTEXT_MESSAGES:]:
-            role_str = msg.role.value.lower() if hasattr(msg.role, 'value') else str(msg.role).lower()
-            messages.append({
-                "role": role_str,
-                "content": msg.content,
-            })
+        for msg in history[-self.MAX_CONTEXT_MESSAGES :]:
+            role_str = (
+                msg.role.value.lower() if hasattr(msg.role, "value") else str(msg.role).lower()
+            )
+            messages.append(
+                {
+                    "role": role_str,
+                    "content": msg.content,
+                }
+            )
 
         # Add current message
-        messages.append({
-            "role": "user",
-            "content": current_content,
-        })
+        messages.append(
+            {
+                "role": "user",
+                "content": current_content,
+            }
+        )
 
         return messages
 

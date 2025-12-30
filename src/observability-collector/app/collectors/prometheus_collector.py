@@ -294,9 +294,11 @@ class PrometheusCollector:
             else:
                 values = []
 
-            parsed.append({
-                "metric": metric,
-                "values": values,
-            })
+            parsed.append(
+                {
+                    "metric": metric,
+                    "values": values,
+                }
+            )
 
         return parsed

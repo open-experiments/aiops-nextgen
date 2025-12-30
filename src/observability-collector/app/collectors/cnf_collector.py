@@ -67,9 +67,7 @@ class CNFCollector:
 
         if not token and self.settings.is_development:
             try:
-                with open(
-                    "/var/run/secrets/kubernetes.io/serviceaccount/token"
-                ) as f:
+                with open("/var/run/secrets/kubernetes.io/serviceaccount/token") as f:
                     token = f.read().strip()
             except FileNotFoundError:
                 pass
@@ -101,26 +99,26 @@ class CNFCollector:
             namespaces = await self._get_cnf_namespaces(api_url, headers)
 
             for namespace in namespaces:
-                pods = await self._get_namespace_pods(
-                    api_url, headers, namespace
-                )
+                pods = await self._get_namespace_pods(api_url, headers, namespace)
                 for pod in pods:
                     cnf_type = self._classify_cnf_workload(pod, namespace)
                     if cnf_type:
-                        workloads.append({
-                            "cluster_id": str(cluster["id"]),
-                            "cluster_name": cluster["name"],
-                            "namespace": namespace,
-                            "name": pod.get("metadata", {}).get("name", ""),
-                            "type": cnf_type,
-                            "status": pod.get("status", {}).get("phase", "Unknown"),
-                            "node": pod.get("spec", {}).get("nodeName", ""),
-                            "containers": [
-                                c.get("name", "")
-                                for c in pod.get("spec", {}).get("containers", [])
-                            ],
-                            "last_updated": datetime.utcnow().isoformat(),
-                        })
+                        workloads.append(
+                            {
+                                "cluster_id": str(cluster["id"]),
+                                "cluster_name": cluster["name"],
+                                "namespace": namespace,
+                                "name": pod.get("metadata", {}).get("name", ""),
+                                "type": cnf_type,
+                                "status": pod.get("status", {}).get("phase", "Unknown"),
+                                "node": pod.get("spec", {}).get("nodeName", ""),
+                                "containers": [
+                                    c.get("name", "")
+                                    for c in pod.get("spec", {}).get("containers", [])
+                                ],
+                                "last_updated": datetime.utcnow().isoformat(),
+                            }
+                        )
 
             if not workloads:
                 return self._get_mock_cnf_workloads(cluster)
@@ -135,9 +133,7 @@ class CNFCollector:
             )
             return self._get_mock_cnf_workloads(cluster)
 
-    async def _get_cnf_namespaces(
-        self, api_url: str, headers: dict[str, str]
-    ) -> list[str]:
+    async def _get_cnf_namespaces(self, api_url: str, headers: dict[str, str]) -> list[str]:
         """Get namespaces that may contain CNF workloads."""
         namespaces_url = f"{api_url}/api/v1/namespaces"
 
@@ -240,9 +236,7 @@ class CNFCollector:
                 for pod in pods:
                     if "linuxptp-daemon" in pod.get("metadata", {}).get("name", ""):
                         node_name = pod.get("spec", {}).get("nodeName", "")
-                        status = await self._get_node_ptp_status(
-                            cluster, node_name, headers
-                        )
+                        status = await self._get_node_ptp_status(cluster, node_name, headers)
                         if status:
                             ptp_statuses.append(status)
 
@@ -292,16 +286,12 @@ class CNFCollector:
                         "cluster_id": str(cluster["id"]),
                         "cluster_name": cluster["name"],
                         "node": node_name,
-                        "interface": results[0].get("metric", {}).get(
-                            "iface", "eth0"
-                        ),
+                        "interface": results[0].get("metric", {}).get("iface", "eth0"),
                         "state": "LOCKED" if abs(offset_ns) < 100 else "FREERUN",
                         "offset_ns": offset_ns,
                         "max_offset_ns": 100,  # Typical requirement
                         "clock_accuracy": "HIGH" if abs(offset_ns) < 50 else "MEDIUM",
-                        "grandmaster": results[0].get("metric", {}).get(
-                            "grandmaster", "unknown"
-                        ),
+                        "grandmaster": results[0].get("metric", {}).get("grandmaster", "unknown"),
                         "last_updated": datetime.utcnow().isoformat(),
                     }
 
@@ -350,22 +340,24 @@ class CNFCollector:
                         total_vfs = iface.get("totalVfs", 0)
                         num_vfs = iface.get("numVfs", 0)
 
-                        sriov_statuses.append({
-                            "cluster_id": str(cluster["id"]),
-                            "cluster_name": cluster["name"],
-                            "node": node_name,
-                            "interface": iface.get("name", ""),
-                            "pci_address": iface.get("pciAddress", ""),
-                            "driver": iface.get("driver", ""),
-                            "vendor": iface.get("vendor", ""),
-                            "device_id": iface.get("deviceID", ""),
-                            "total_vfs": total_vfs,
-                            "configured_vfs": num_vfs,
-                            "vfs": iface.get("vfs", []),
-                            "mtu": iface.get("mtu", 1500),
-                            "link_speed": iface.get("linkSpeed", ""),
-                            "last_updated": datetime.utcnow().isoformat(),
-                        })
+                        sriov_statuses.append(
+                            {
+                                "cluster_id": str(cluster["id"]),
+                                "cluster_name": cluster["name"],
+                                "node": node_name,
+                                "interface": iface.get("name", ""),
+                                "pci_address": iface.get("pciAddress", ""),
+                                "driver": iface.get("driver", ""),
+                                "vendor": iface.get("vendor", ""),
+                                "device_id": iface.get("deviceID", ""),
+                                "total_vfs": total_vfs,
+                                "configured_vfs": num_vfs,
+                                "vfs": iface.get("vfs", []),
+                                "mtu": iface.get("mtu", 1500),
+                                "link_speed": iface.get("linkSpeed", ""),
+                                "last_updated": datetime.utcnow().isoformat(),
+                            }
+                        )
 
             if not sriov_statuses:
                 return self._get_mock_sriov_status(cluster)
@@ -420,9 +412,7 @@ class CNFCollector:
                     results = data.get("data", {}).get("result", [])
 
                     if results:
-                        return self._parse_dpdk_metrics(
-                            cluster, pod_name, namespace, results
-                        )
+                        return self._parse_dpdk_metrics(cluster, pod_name, namespace, results)
 
             # Fall back to mock data
             return self._get_mock_dpdk_stats(cluster, pod_name)
@@ -497,17 +487,19 @@ class CNFCollector:
         cnf_types = cluster.get("capabilities", {}).get("cnf_types", [])
 
         for i, cnf_type in enumerate(cnf_types):
-            workloads.append({
-                "cluster_id": str(cluster["id"]),
-                "cluster_name": cluster["name"],
-                "namespace": f"{cnf_type.lower()}-system",
-                "name": f"{cnf_type.lower()}-pod-{i:02d}",
-                "type": cnf_type,
-                "status": "Running",
-                "node": f"worker-cnf-{i % 3 + 1:02d}",
-                "containers": [cnf_type.lower(), "sidecar"],
-                "last_updated": datetime.utcnow().isoformat(),
-            })
+            workloads.append(
+                {
+                    "cluster_id": str(cluster["id"]),
+                    "cluster_name": cluster["name"],
+                    "namespace": f"{cnf_type.lower()}-system",
+                    "name": f"{cnf_type.lower()}-pod-{i:02d}",
+                    "type": cnf_type,
+                    "status": "Running",
+                    "node": f"worker-cnf-{i % 3 + 1:02d}",
+                    "containers": [cnf_type.lower(), "sidecar"],
+                    "last_updated": datetime.utcnow().isoformat(),
+                }
+            )
 
         return workloads
 
@@ -560,9 +552,7 @@ class CNFCollector:
             for i in range(1, 3)
         ]
 
-    def _get_mock_dpdk_stats(
-        self, cluster: dict, pod_name: str
-    ) -> dict[str, Any]:
+    def _get_mock_dpdk_stats(self, cluster: dict, pod_name: str) -> dict[str, Any]:
         """Generate mock DPDK statistics for testing."""
         return {
             "cluster_id": str(cluster["id"]),

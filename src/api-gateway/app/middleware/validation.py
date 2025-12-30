@@ -47,9 +47,8 @@ FIELD_VALIDATORS = {
     "name": lambda x: isinstance(x, str) and 1 <= len(x) <= 63,
     "api_server_url": lambda x: isinstance(x, str) and x.startswith(("http://", "https://")),
     "content": lambda x: isinstance(x, str) and len(x) > 0,
-    "report_type": lambda x: x in [
-        "executive_summary", "detailed_analysis", "incident_report", "capacity_plan"
-    ],
+    "report_type": lambda x: x
+    in ["executive_summary", "detailed_analysis", "incident_report", "capacity_plan"],
     "hours": lambda x: isinstance(x, int) and 1 <= x <= 720,
     "limit": lambda x: isinstance(x, int) and 1 <= x <= 1000,
 }

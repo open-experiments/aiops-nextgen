@@ -449,36 +449,35 @@ class TempoCollector:
 
         for batch in batches:
             resource = batch.get("resource", {})
-            resource_attrs = self._parse_attributes(
-                resource.get("attributes", [])
-            )
+            resource_attrs = self._parse_attributes(resource.get("attributes", []))
             service_name = resource_attrs.get("service.name", "unknown")
 
             scope_spans = batch.get("scopeSpans", [])
             for scope_span in scope_spans:
                 for span in scope_span.get("spans", []):
-                    spans.append({
-                        "traceID": trace_id,
-                        "spanID": span.get("spanId", ""),
-                        "parentSpanID": span.get("parentSpanId", ""),
-                        "operationName": span.get("name", ""),
-                        "serviceName": service_name,
-                        "startTime": span.get("startTimeUnixNano", 0),
-                        "duration": (
-                            span.get("endTimeUnixNano", 0)
-                            - span.get("startTimeUnixNano", 0)
-                        ),
-                        "status": span.get("status", {}).get("code", "UNSET"),
-                        "tags": self._parse_attributes(span.get("attributes", [])),
-                        "events": [
-                            {
-                                "name": e.get("name", ""),
-                                "timestamp": e.get("timeUnixNano", 0),
-                                "attributes": self._parse_attributes(e.get("attributes", [])),
-                            }
-                            for e in span.get("events", [])
-                        ],
-                    })
+                    spans.append(
+                        {
+                            "traceID": trace_id,
+                            "spanID": span.get("spanId", ""),
+                            "parentSpanID": span.get("parentSpanId", ""),
+                            "operationName": span.get("name", ""),
+                            "serviceName": service_name,
+                            "startTime": span.get("startTimeUnixNano", 0),
+                            "duration": (
+                                span.get("endTimeUnixNano", 0) - span.get("startTimeUnixNano", 0)
+                            ),
+                            "status": span.get("status", {}).get("code", "UNSET"),
+                            "tags": self._parse_attributes(span.get("attributes", [])),
+                            "events": [
+                                {
+                                    "name": e.get("name", ""),
+                                    "timestamp": e.get("timeUnixNano", 0),
+                                    "attributes": self._parse_attributes(e.get("attributes", [])),
+                                }
+                                for e in span.get("events", [])
+                            ],
+                        }
+                    )
 
         return {
             "traceID": trace_id,

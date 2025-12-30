@@ -18,8 +18,8 @@ from shared.redis_client import RedisClient
 from ..schemas.credentials import (
     CredentialInput,
     CredentialStatus,
-    ValidationResult,
     EndpointValidation,
+    ValidationResult,
     ValidationStatus,
 )
 from .event_service import EventService
@@ -46,9 +46,7 @@ class CredentialService:
         self.redis = redis_client
         self.event_service = EventService(redis_client)
 
-    async def store(
-        self, cluster_id: UUID, credentials: CredentialInput
-    ) -> CredentialStatus:
+    async def store(self, cluster_id: UUID, credentials: CredentialInput) -> CredentialStatus:
         """Store credentials securely.
 
         Spec Reference: specs/02-cluster-registry.md Section 5.2
@@ -112,9 +110,7 @@ class CredentialService:
             else None,
         )
 
-    async def rotate(
-        self, cluster_id: UUID, new_credentials: CredentialInput
-    ) -> CredentialStatus:
+    async def rotate(self, cluster_id: UUID, new_credentials: CredentialInput) -> CredentialStatus:
         """Rotate credentials with zero-downtime.
 
         Spec Reference: specs/02-cluster-registry.md Section 5.2
@@ -162,9 +158,7 @@ class CredentialService:
 
         prometheus_validation = None
         if credentials.prometheus_token:
-            prometheus_validation = EndpointValidation(
-                status=ValidationStatus.SUCCESS
-            )
+            prometheus_validation = EndpointValidation(status=ValidationStatus.SUCCESS)
 
         tempo_validation = None
         if credentials.tempo_token:

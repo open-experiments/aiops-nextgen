@@ -33,9 +33,7 @@ async def test_create_cluster(test_client: AsyncClient, sample_cluster_data):
 
 
 @pytest.mark.asyncio
-async def test_create_cluster_duplicate_name(
-    test_client: AsyncClient, sample_cluster_data
-):
+async def test_create_cluster_duplicate_name(test_client: AsyncClient, sample_cluster_data):
     """Test creating cluster with duplicate name returns 409.
 
     Spec Reference: specs/02-cluster-registry.md Section 12
@@ -119,16 +117,12 @@ async def test_list_clusters_with_filters(test_client: AsyncClient, sample_clust
     await test_client.post("/api/v1/clusters", json=sample_cluster_data)
 
     # Filter by environment
-    response = await test_client.get(
-        "/api/v1/clusters", params={"environment": "DEVELOPMENT"}
-    )
+    response = await test_client.get("/api/v1/clusters", params={"environment": "DEVELOPMENT"})
     assert response.status_code == 200
     assert response.json()["total"] >= 1
 
     # Filter by non-matching environment
-    response = await test_client.get(
-        "/api/v1/clusters", params={"environment": "PRODUCTION"}
-    )
+    response = await test_client.get("/api/v1/clusters", params={"environment": "PRODUCTION"})
     assert response.status_code == 200
     assert response.json()["total"] == 0
 

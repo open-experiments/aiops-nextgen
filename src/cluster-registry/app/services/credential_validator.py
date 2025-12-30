@@ -115,9 +115,7 @@ class CredentialValidator:
 
         return headers
 
-    def _get_client_cert(
-        self, credentials: ClusterCredentials
-    ) -> tuple[str, str] | None:
+    def _get_client_cert(self, credentials: ClusterCredentials) -> tuple[str, str] | None:
         """Get client certificate tuple for mTLS."""
         if credentials.auth_type == AuthType.CERTIFICATE:
             # In production, certs would be written to temp files

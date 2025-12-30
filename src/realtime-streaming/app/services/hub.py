@@ -43,9 +43,7 @@ class WebSocketHub:
                 "connected_at": datetime.utcnow().isoformat() + "Z",
                 "subscriptions": [],
             }
-            self._message_queues[client_id] = asyncio.Queue(
-                maxsize=self.MAX_QUEUE_SIZE
-            )
+            self._message_queues[client_id] = asyncio.Queue(maxsize=self.MAX_QUEUE_SIZE)
 
         logger.info(
             "Client connected to hub",

@@ -54,8 +54,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         "observability-collector": settings.services.observability_collector_url,
         "intelligence-engine": settings.services.intelligence_engine_url,
         "realtime-streaming": getattr(
-            settings.services, "realtime_streaming_url",
-            "http://realtime-streaming:8080"
+            settings.services, "realtime_streaming_url", "http://realtime-streaming:8080"
         ),
     }
 

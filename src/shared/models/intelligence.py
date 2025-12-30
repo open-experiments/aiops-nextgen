@@ -80,12 +80,8 @@ class Persona(AIOpsBaseModel):
         default_factory=list, description="MCP tools this persona can use"
     )
     icon: str | None = Field(default=None, description="Icon identifier for UI")
-    is_builtin: bool = Field(
-        default=False, description="Whether this is a system-provided persona"
-    )
-    created_by: str | None = Field(
-        default=None, description="User who created custom persona"
-    )
+    is_builtin: bool = Field(default=False, description="Whether this is a system-provided persona")
+    created_by: str | None = Field(default=None, description="User who created custom persona")
 
 
 class ToolCall(AIOpsBaseModel):
@@ -96,9 +92,7 @@ class ToolCall(AIOpsBaseModel):
 
     id: str
     name: str = Field(description="MCP tool name")
-    arguments: dict[str, Any] = Field(
-        default_factory=dict, description="Tool arguments as JSON"
-    )
+    arguments: dict[str, Any] = Field(default_factory=dict, description="Tool arguments as JSON")
 
 
 class ToolResult(AIOpsBaseModel):
@@ -109,9 +103,7 @@ class ToolResult(AIOpsBaseModel):
 
     tool_call_id: str
     status: ToolResultStatus
-    result: dict[str, Any] | None = Field(
-        default=None, description="Tool result as JSON"
-    )
+    result: dict[str, Any] | None = Field(default=None, description="Tool result as JSON")
     error: str | None = None
 
 
@@ -125,9 +117,7 @@ class ChatMessage(AIOpsBaseModel):
     session_id: UUID
     role: MessageRole
     content: str
-    persona_id: str | None = Field(
-        default=None, description="Active persona when message was sent"
-    )
+    persona_id: str | None = Field(default=None, description="Active persona when message was sent")
     tool_calls: list[ToolCall] = Field(
         default_factory=list, description="Tools invoked by assistant"
     )
@@ -148,9 +138,7 @@ class ChatSession(AIOpsBaseModel):
 
     id: UUID
     user_id: str = Field(description="User who owns the session")
-    title: str | None = Field(
-        default=None, description="Auto-generated or user-set title"
-    )
+    title: str | None = Field(default=None, description="Auto-generated or user-set title")
     persona_id: str = Field(default="default")
     cluster_context: list[UUID] = Field(
         default_factory=list, description="Clusters in scope for this session"

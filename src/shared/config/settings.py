@@ -131,9 +131,7 @@ class LLMSettings(BaseSettings):
     openai_model: str = Field(default="gpt-4o", description="OpenAI model")
 
     anthropic_api_key: str | None = Field(default=None, description="Anthropic API key")
-    anthropic_model: str = Field(
-        default="claude-sonnet-4-20250514", description="Anthropic model"
-    )
+    anthropic_model: str = Field(default="claude-sonnet-4-20250514", description="Anthropic model")
 
     # Common settings
     max_tokens: int = Field(default=4096, description="Max tokens for completion")

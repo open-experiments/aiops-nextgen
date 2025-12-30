@@ -10,10 +10,9 @@ Redis Database Layout:
 """
 
 import json
-from datetime import datetime
+from collections.abc import Callable
 from enum import IntEnum
-from typing import Any, Callable
-from uuid import UUID, uuid4
+from typing import Any
 
 import redis.asyncio as redis
 from pydantic import BaseModel
@@ -92,7 +91,9 @@ class RedisClient:
         main_channel = "aiops:events:all"
 
         # Type-specific channel (handle both enum and string due to use_enum_values=True)
-        event_type_str = event.event_type.value if hasattr(event.event_type, 'value') else event.event_type
+        event_type_str = (
+            event.event_type.value if hasattr(event.event_type, "value") else event.event_type
+        )
         type_channel = f"aiops:events:{event_type_str.lower().split('_')[0]}"
 
         # Cluster-specific channel if applicable

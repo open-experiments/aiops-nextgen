@@ -136,9 +136,7 @@ class AnomalyDetector:
                         deviation_percent=self._calc_deviation(
                             result.expected_value, result.actual_value
                         ),
-                        explanation=self._generate_description(
-                            metric_data.metric_name, result
-                        ),
+                        explanation=self._generate_description(metric_data.metric_name, result),
                     )
                     anomalies.append(anomaly)
 
@@ -192,19 +190,21 @@ class AnomalyDetector:
             zscore = abs((value - mean) / std)
             is_anomaly = zscore > threshold
 
-            results.append((
-                ts,
-                DetectionResult(
-                    is_anomaly=is_anomaly,
-                    score=zscore,
-                    method=DetectionMethod.ZSCORE,
-                    threshold=threshold,
-                    confidence=min(zscore / threshold, 1.0) if is_anomaly else 0,
-                    expected_value=mean,
-                    actual_value=value,
-                    details={"mean": mean, "std": std, "value": value},
-                ),
-            ))
+            results.append(
+                (
+                    ts,
+                    DetectionResult(
+                        is_anomaly=is_anomaly,
+                        score=zscore,
+                        method=DetectionMethod.ZSCORE,
+                        threshold=threshold,
+                        confidence=min(zscore / threshold, 1.0) if is_anomaly else 0,
+                        expected_value=mean,
+                        actual_value=value,
+                        details={"mean": mean, "std": std, "value": value},
+                    ),
+                )
+            )
 
         return results
 
@@ -235,25 +235,27 @@ class AnomalyDetector:
             is_anomaly = distance > 0
             score = distance / iqr if iqr > 0 else 0
 
-            results.append((
-                ts,
-                DetectionResult(
-                    is_anomaly=is_anomaly,
-                    score=score,
-                    method=DetectionMethod.IQR,
-                    threshold=self.config.iqr_multiplier,
-                    confidence=min(score, 1.0) if is_anomaly else 0,
-                    expected_value=median,
-                    actual_value=value,
-                    details={
-                        "q1": q1,
-                        "q3": q3,
-                        "iqr": iqr,
-                        "lower_bound": lower_bound,
-                        "upper_bound": upper_bound,
-                    },
-                ),
-            ))
+            results.append(
+                (
+                    ts,
+                    DetectionResult(
+                        is_anomaly=is_anomaly,
+                        score=score,
+                        method=DetectionMethod.IQR,
+                        threshold=self.config.iqr_multiplier,
+                        confidence=min(score, 1.0) if is_anomaly else 0,
+                        expected_value=median,
+                        actual_value=value,
+                        details={
+                            "q1": q1,
+                            "q3": q3,
+                            "iqr": iqr,
+                            "lower_bound": lower_bound,
+                            "upper_bound": upper_bound,
+                        },
+                    ),
+                )
+            )
 
         return results
 
@@ -284,19 +286,21 @@ class AnomalyDetector:
         for pred, sc, ts, value in zip(predictions, scores, timestamps, values, strict=True):
             is_anomaly = pred == -1
 
-            results.append((
-                ts,
-                DetectionResult(
-                    is_anomaly=is_anomaly,
-                    score=abs(float(sc)),
-                    method=DetectionMethod.ISOLATION_FOREST,
-                    threshold=self.config.isolation_contamination,
-                    confidence=abs(float(sc)) if is_anomaly else 0,
-                    expected_value=mean,
-                    actual_value=value,
-                    details={"prediction": int(pred)},
-                ),
-            ))
+            results.append(
+                (
+                    ts,
+                    DetectionResult(
+                        is_anomaly=is_anomaly,
+                        score=abs(float(sc)),
+                        method=DetectionMethod.ISOLATION_FOREST,
+                        threshold=self.config.isolation_contamination,
+                        confidence=abs(float(sc)) if is_anomaly else 0,
+                        expected_value=mean,
+                        actual_value=value,
+                        details={"prediction": int(pred)},
+                    ),
+                )
+            )
 
         return results
 
@@ -341,23 +345,25 @@ class AnomalyDetector:
                 is_anomaly = zscore > threshold
                 expected = value - float(res)
 
-                results.append((
-                    ts,
-                    DetectionResult(
-                        is_anomaly=is_anomaly,
-                        score=zscore,
-                        method=DetectionMethod.SEASONAL,
-                        threshold=threshold,
-                        confidence=min(zscore / threshold, 1.0) if is_anomaly else 0,
-                        expected_value=expected,
-                        actual_value=value,
-                        details={
-                            "trend": float(decomposition.trend[i]),
-                            "seasonal": float(decomposition.seasonal[i]),
-                            "residual": float(res),
-                        },
-                    ),
-                ))
+                results.append(
+                    (
+                        ts,
+                        DetectionResult(
+                            is_anomaly=is_anomaly,
+                            score=zscore,
+                            method=DetectionMethod.SEASONAL,
+                            threshold=threshold,
+                            confidence=min(zscore / threshold, 1.0) if is_anomaly else 0,
+                            expected_value=expected,
+                            actual_value=value,
+                            details={
+                                "trend": float(decomposition.trend[i]),
+                                "seasonal": float(decomposition.seasonal[i]),
+                                "residual": float(res),
+                            },
+                        ),
+                    )
+                )
 
             return results
 
@@ -392,19 +398,21 @@ class AnomalyDetector:
         for pred, sc, ts, value in zip(predictions, scores, timestamps, values, strict=True):
             is_anomaly = pred == -1
 
-            results.append((
-                ts,
-                DetectionResult(
-                    is_anomaly=is_anomaly,
-                    score=float(sc),
-                    method=DetectionMethod.LOF,
-                    threshold=1.5,  # LOF threshold
-                    confidence=min(float(sc) - 1, 1.0) if is_anomaly else 0,
-                    expected_value=mean,
-                    actual_value=value,
-                    details={"lof_score": float(sc)},
-                ),
-            ))
+            results.append(
+                (
+                    ts,
+                    DetectionResult(
+                        is_anomaly=is_anomaly,
+                        score=float(sc),
+                        method=DetectionMethod.LOF,
+                        threshold=1.5,  # LOF threshold
+                        confidence=min(float(sc) - 1, 1.0) if is_anomaly else 0,
+                        expected_value=mean,
+                        actual_value=value,
+                        details={"lof_score": float(sc)},
+                    ),
+                )
+            )
 
         return results
 

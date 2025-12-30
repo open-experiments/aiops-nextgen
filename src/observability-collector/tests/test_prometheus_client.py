@@ -5,12 +5,12 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
-
 from app.clients.prometheus import (
     PrometheusAuthConfig,
     PrometheusAuthType,
     PrometheusClient,
 )
+
 from shared.models import MetricResultStatus, MetricResultType
 
 
@@ -187,9 +187,7 @@ class TestHealthCheck:
         """Test health check returns False when unhealthy."""
         with patch.object(prometheus_client, "_get_client") as mock_get:
             mock_client = AsyncMock()
-            mock_client.get = AsyncMock(
-                side_effect=httpx.ConnectError("Connection refused")
-            )
+            mock_client.get = AsyncMock(side_effect=httpx.ConnectError("Connection refused"))
             mock_get.return_value = mock_client
 
             result = await prometheus_client.check_health()

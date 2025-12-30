@@ -127,7 +127,11 @@ class ReportGenerator:
                             "headers": ["Metric", "Average", "Status"],
                             "rows": [
                                 ["CPU", f"{cpu_avg:.1f}%", "OK" if cpu_avg < 80 else "High"],
-                                ["Memory", f"{memory_avg:.1f}%", "OK" if memory_avg < 80 else "High"],  # noqa: E501
+                                [
+                                    "Memory",
+                                    f"{memory_avg:.1f}%",
+                                    "OK" if memory_avg < 80 else "High",
+                                ],  # noqa: E501
                             ],
                         }
                     ],
@@ -394,9 +398,7 @@ class ReportGenerator:
                 html.append("</ul>")
         return "\n".join(html)
 
-    def _generate_health_recommendations(
-        self, sections: list[ReportSection]
-    ) -> list[str]:
+    def _generate_health_recommendations(self, sections: list[ReportSection]) -> list[str]:
         """Generate health-based recommendations."""
         recommendations = []
 
@@ -414,9 +416,7 @@ class ReportGenerator:
 
         return recommendations
 
-    def _generate_anomaly_recommendations(
-        self, anomalies: list
-    ) -> list[str]:
+    def _generate_anomaly_recommendations(self, anomalies: list) -> list[str]:
         """Generate anomaly-based recommendations."""
         if not anomalies:
             return ["No anomalies detected. System is operating normally."]

@@ -18,12 +18,12 @@ from sqlalchemy import (
     String,
     Text,
 )
-from sqlalchemy.dialects.postgresql import JSONB, UUID as PG_UUID
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
 from .base import Base
-
 
 # =============================================================================
 # Cluster Registry Models (spec 02-cluster-registry.md Section 7)
@@ -61,9 +61,7 @@ class ClusterModel(Base):
         {"schema": "clusters"},
     )
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(63), unique=True, nullable=False)
     display_name: Mapped[str | None] = mapped_column(String(128))
     api_server_url: Mapped[str] = mapped_column(String(512), nullable=False)
@@ -78,9 +76,7 @@ class ClusterModel(Base):
     status: Mapped[dict[str, Any]] = mapped_column(
         JSONB, nullable=False, default={"state": "UNKNOWN"}
     )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -104,18 +100,14 @@ class ClusterHealthHistoryModel(Base):
         {"schema": "clusters"},
     )
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     cluster_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("clusters.clusters.id", ondelete="CASCADE"),
         nullable=False,
     )
     status: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
-    checked_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    checked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
     cluster: Mapped["ClusterModel"] = relationship(back_populates="health_history")
@@ -139,17 +131,13 @@ class ChatSessionModel(Base):
         {"schema": "intelligence"},
     )
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     user_id: Mapped[str] = mapped_column(String(255), nullable=False)
     title: Mapped[str | None] = mapped_column(String(255))
     persona_id: Mapped[str] = mapped_column(String(63), default="default")
     cluster_context: Mapped[list[str]] = mapped_column(JSONB, default=list)
     message_count: Mapped[int] = mapped_column(Integer, default=0)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -174,9 +162,7 @@ class ChatMessageModel(Base):
         {"schema": "intelligence"},
     )
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     session_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("intelligence.chat_sessions.id", ondelete="CASCADE"),
@@ -190,9 +176,7 @@ class ChatMessageModel(Base):
     model: Mapped[str | None] = mapped_column(String(128))
     tokens_used: Mapped[int | None] = mapped_column(Integer)
     latency_ms: Mapped[int | None] = mapped_column(Integer)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
     session: Mapped["ChatSessionModel"] = relationship(back_populates="messages")
@@ -211,9 +195,7 @@ class AnomalyDetectionModel(Base):
         {"schema": "intelligence"},
     )
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     cluster_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
     metric_name: Mapped[str] = mapped_column(String(255), nullable=False)
     labels: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
@@ -244,9 +226,7 @@ class ReportModel(Base):
         {"schema": "intelligence"},
     )
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     report_type: Mapped[str] = mapped_column(String(30), nullable=False)
     format: Mapped[str] = mapped_column(String(20), nullable=False)
@@ -255,7 +235,5 @@ class ReportModel(Base):
     generated_by: Mapped[str] = mapped_column(String(255), nullable=False)
     storage_path: Mapped[str] = mapped_column(String(512), nullable=False)
     size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

@@ -419,10 +419,7 @@ class LokiCollector:
             return [
                 {
                     "stream": entry.get("stream", {}),
-                    "values": [
-                        {"timestamp": v[0], "line": v[1]}
-                        for v in entry.get("values", [])
-                    ],
+                    "values": [{"timestamp": v[0], "line": v[1]} for v in entry.get("values", [])],
                 }
                 for entry in raw_result
             ]
@@ -432,8 +429,7 @@ class LokiCollector:
                 {
                     "metric": entry.get("metric", {}),
                     "values": [
-                        {"timestamp": v[0], "value": float(v[1])}
-                        for v in entry.get("values", [])
+                        {"timestamp": v[0], "value": float(v[1])} for v in entry.get("values", [])
                     ],
                 }
                 for entry in raw_result

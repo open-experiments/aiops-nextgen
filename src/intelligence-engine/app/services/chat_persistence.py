@@ -73,8 +73,7 @@ class ChatPersistenceService:
                 existing.title = session.title
                 existing.persona_id = session.persona_id
                 existing.cluster_context = (
-                    [str(c) for c in session.cluster_context]
-                    if session.cluster_context else []
+                    [str(c) for c in session.cluster_context] if session.cluster_context else []
                 )
                 existing.message_count = session.message_count
                 existing.updated_at = datetime.utcnow()
@@ -82,8 +81,7 @@ class ChatPersistenceService:
             else:
                 # Create new
                 cluster_ctx = (
-                    [str(c) for c in session.cluster_context]
-                    if session.cluster_context else []
+                    [str(c) for c in session.cluster_context] if session.cluster_context else []
                 )
                 db_session = ChatSessionModel(
                     id=session.id,
@@ -275,10 +273,7 @@ class ChatPersistenceService:
         """Convert SQLAlchemy model to Pydantic model."""
         cluster_context = []
         if model.cluster_context:
-            cluster_context = [
-                UUID(c) if isinstance(c, str) else c
-                for c in model.cluster_context
-            ]
+            cluster_context = [UUID(c) if isinstance(c, str) else c for c in model.cluster_context]
         return ChatSession(
             id=model.id,
             user_id=model.user_id,
@@ -295,10 +290,7 @@ class ChatPersistenceService:
         """Convert SQLAlchemy model to Pydantic model."""
         tool_calls = None
         if model.tool_calls:
-            tool_calls = [
-                ToolCall(**tc) if isinstance(tc, dict) else tc
-                for tc in model.tool_calls
-            ]
+            tool_calls = [ToolCall(**tc) if isinstance(tc, dict) else tc for tc in model.tool_calls]
 
         tool_results = None
         if model.tool_results:

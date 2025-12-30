@@ -3,12 +3,11 @@
 Spec Reference: specs/01-data-models.md
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import uuid4
 
-import pytest
-
 from shared.models import (
+    GPU,
     Alert,
     AlertSeverity,
     AlertState,
@@ -29,12 +28,8 @@ from shared.models import (
     Environment,
     Event,
     EventType,
-    GPU,
     GPUNode,
-    GPUProcess,
-    GPUProcessType,
     LogEntry,
-    LogQuery,
     MessageRole,
     MetricQuery,
     MetricResult,
@@ -50,13 +45,11 @@ from shared.models import (
     Span,
     SpanStatus,
     Subscription,
-    SubscriptionRequest,
     TimeRange,
     ToolCall,
     ToolResult,
     ToolResultStatus,
     Trace,
-    TraceQuery,
 )
 
 
@@ -126,8 +119,8 @@ class TestClusterModels:
             platform=Platform.OPENSHIFT,
             environment=Environment.DEVELOPMENT,
             status=ClusterStatus(state=ClusterState.ONLINE),
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
         )
         assert cluster.name == sample_cluster_data["name"]
 
@@ -139,8 +132,8 @@ class TestObservabilityModels:
         """Test MetricQuery model."""
         query = MetricQuery(
             query="up{job='prometheus'}",
-            start=datetime.now(timezone.utc),
-            end=datetime.now(timezone.utc),
+            start=datetime.now(UTC),
+            end=datetime.now(UTC),
         )
         assert "up" in query.query
 
@@ -168,7 +161,7 @@ class TestObservabilityModels:
             state=AlertState.FIRING,
             labels={"pod": "nginx-abc123"},
             annotations={"description": "Memory usage above 80%"},
-            started_at=datetime.now(timezone.utc),
+            started_at=datetime.now(UTC),
             cluster_id=uuid4(),
         )
         assert alert.severity == AlertSeverity.WARNING
@@ -183,7 +176,7 @@ class TestObservabilityModels:
             service_name="api-gateway",
             duration_ms=150.5,
             status=SpanStatus.OK,
-            start_time=datetime.now(timezone.utc),
+            start_time=datetime.now(UTC),
         )
         trace = Trace(
             trace_id="abc123",
@@ -192,7 +185,7 @@ class TestObservabilityModels:
             duration_ms=150.5,
             span_count=1,
             has_errors=False,
-            start_time=datetime.now(timezone.utc),
+            start_time=datetime.now(UTC),
             spans=[span],
         )
         assert trace.span_count == 1
@@ -201,7 +194,7 @@ class TestObservabilityModels:
     def test_log_entry(self) -> None:
         """Test LogEntry model."""
         log = LogEntry(
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             level="ERROR",
             message="Connection refused",
             labels={"app": "nginx", "namespace": "default"},
@@ -249,7 +242,7 @@ class TestGPUModels:
             total_memory_mib=81920,
             used_memory_mib=16384,
             average_utilization=50.0,
-            collected_at=datetime.now(timezone.utc),
+            collected_at=datetime.now(UTC),
         )
         assert node.gpu_count == 2
         assert len(node.gpus) == 1
@@ -276,8 +269,8 @@ class TestIntelligenceModels:
             user_id=sample_chat_session_data["user_id"],
             persona_id=sample_chat_session_data["persona_id"],
             message_count=0,
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
         )
         assert session.persona_id == "kubernetes-expert"
 
@@ -288,7 +281,7 @@ class TestIntelligenceModels:
             session_id=uuid4(),
             role=MessageRole.USER,
             content="What pods are failing?",
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         assert message.role == MessageRole.USER
 
@@ -321,7 +314,7 @@ class TestIntelligenceModels:
             actual_value=0.95,
             deviation_percent=90.0,
             explanation="CPU usage spiked 90% above normal",
-            detected_at=datetime.now(timezone.utc),
+            detected_at=datetime.now(UTC),
         )
         assert anomaly.severity == AnomalySeverity.HIGH
         assert anomaly.confidence_score == 0.95
@@ -337,7 +330,7 @@ class TestEventModels:
             event_type=EventType.CLUSTER_REGISTERED,
             source="cluster-registry",
             cluster_id=uuid4(),
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             payload={"name": "new-cluster"},
         )
         assert event.event_type == EventType.CLUSTER_REGISTERED
@@ -349,7 +342,7 @@ class TestEventModels:
             client_id="client-123",
             event_types=[EventType.ALERT_FIRED, EventType.ALERT_RESOLVED],
             cluster_filter=[uuid4()],
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         assert len(subscription.event_types) == 2
 
@@ -376,7 +369,7 @@ class TestReportModels:
             generated_by="user@example.com",
             storage_path="/reports/weekly-2024-12-24.pdf",
             size_bytes=1024000,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         assert report.report_type == ReportType.EXECUTIVE_SUMMARY
 
@@ -387,7 +380,7 @@ class TestCommonModels:
     def test_time_range(self) -> None:
         """Test TimeRange model."""
         time_range = TimeRange(
-            start=datetime(2024, 12, 24, 0, 0, tzinfo=timezone.utc),
-            end=datetime(2024, 12, 24, 23, 59, tzinfo=timezone.utc),
+            start=datetime(2024, 12, 24, 0, 0, tzinfo=UTC),
+            end=datetime(2024, 12, 24, 23, 59, tzinfo=UTC),
         )
         assert time_range.start < time_range.end

@@ -8,4 +8,5 @@ from fastapi.testclient import TestClient
 def client():
     """Create test client."""
     from app.main import app
+
     return TestClient(app)

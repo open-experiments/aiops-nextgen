@@ -6,11 +6,10 @@ Spec Reference: specs/03-observability-collector.md Section 4.4
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from shared.models.observability import AlertSeverity, AlertState
 from shared.observability import get_logger
@@ -113,7 +112,7 @@ async def list_alerts(
         return alerts
     except Exception as e:
         logger.error("List alerts failed", error=str(e))
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get(
@@ -140,7 +139,7 @@ async def get_alert(request: Request, fingerprint: str):
         raise
     except Exception as e:
         logger.error("Get alert failed", error=str(e), fingerprint=fingerprint)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post(
@@ -170,4 +169,4 @@ async def receive_webhook(
             error=str(e),
             cluster_id=str(cluster_id),
         )
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

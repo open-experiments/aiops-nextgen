@@ -4,7 +4,6 @@ Spec Reference: specs/01-data-models.md Section 1 - Conventions
 """
 
 from datetime import datetime
-from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict

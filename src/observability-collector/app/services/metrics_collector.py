@@ -81,9 +81,7 @@ class MetricsCollector:
                 return MetricResult(**cached)
 
         # Get client
-        client = await self.get_client(
-            cluster_id, prometheus_url, token, skip_tls_verify
-        )
+        client = await self.get_client(cluster_id, prometheus_url, token, skip_tls_verify)
 
         # Execute query
         if query.start and query.end:
@@ -127,6 +125,7 @@ class MetricsCollector:
         Returns:
             Dict mapping cluster_id to MetricResult
         """
+
         async def query_cluster(cluster: dict) -> tuple[str, MetricResult]:
             result = await self.query(
                 cluster_id=cluster["id"],
@@ -171,9 +170,7 @@ class MetricsCollector:
         skip_tls_verify: bool = False,
     ) -> bool:
         """Check if Prometheus is healthy on a cluster."""
-        client = await self.get_client(
-            cluster_id, prometheus_url, token, skip_tls_verify
-        )
+        client = await self.get_client(cluster_id, prometheus_url, token, skip_tls_verify)
         return await client.check_health()
 
     async def close(self):

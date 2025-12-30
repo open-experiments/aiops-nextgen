@@ -87,17 +87,17 @@ async def websocket_endpoint(websocket: WebSocket):
     )
 
     # Start message sender task for backpressure handling
-    sender_task = asyncio.create_task(
-        _message_sender(websocket, client_id)
-    )
+    sender_task = asyncio.create_task(_message_sender(websocket, client_id))
 
     try:
         # Send connection confirmation
-        await websocket.send_json({
-            "type": "connected",
-            "client_id": client_id,
-            "server_time": datetime.now(UTC).isoformat(),
-        })
+        await websocket.send_json(
+            {
+                "type": "connected",
+                "client_id": client_id,
+                "server_time": datetime.now(UTC).isoformat(),
+            }
+        )
 
         # Message handling loop
         while True:
@@ -112,11 +112,13 @@ async def websocket_endpoint(websocket: WebSocket):
                     subscription_manager,
                 )
             except json.JSONDecodeError:
-                await websocket.send_json({
-                    "type": "error",
-                    "code": "INVALID_MESSAGE",
-                    "message": "Invalid JSON message",
-                })
+                await websocket.send_json(
+                    {
+                        "type": "error",
+                        "code": "INVALID_MESSAGE",
+                        "message": "Invalid JSON message",
+                    }
+                )
 
     except WebSocketDisconnect:
         logger.info(
@@ -205,12 +207,14 @@ async def handle_message(
     if msg_type == "auth":
         # Authentication is now done at connection time
         # This message type is kept for backward compatibility
-        await websocket.send_json({
-            "type": "auth_response",
-            "status": "authenticated",
-            "client_id": client_id,
-            "message": "Authentication validated at connection time",
-        })
+        await websocket.send_json(
+            {
+                "type": "auth_response",
+                "status": "authenticated",
+                "client_id": client_id,
+                "message": "Authentication validated at connection time",
+            }
+        )
 
     elif msg_type == "subscribe":
         subscription = message.get("subscription", {})
@@ -225,12 +229,14 @@ async def handle_message(
             namespace_filter=namespace_filter,
         )
 
-        await websocket.send_json({
-            "type": "subscribed",
-            "event_types": event_types,
-            "cluster_filter": cluster_filter,
-            "namespace_filter": namespace_filter,
-        })
+        await websocket.send_json(
+            {
+                "type": "subscribed",
+                "event_types": event_types,
+                "cluster_filter": cluster_filter,
+                "namespace_filter": namespace_filter,
+            }
+        )
 
         logger.info(
             "Client subscribed",
@@ -242,27 +248,33 @@ async def handle_message(
         event_types = message.get("event_types")
         await subscription_manager.unsubscribe(client_id, event_types)
 
-        await websocket.send_json({
-            "type": "unsubscribed",
-            "event_types": event_types,
-        })
+        await websocket.send_json(
+            {
+                "type": "unsubscribed",
+                "event_types": event_types,
+            }
+        )
 
     elif msg_type == "ping":
         # Client-initiated ping (different from server heartbeat)
         timestamp = message.get("timestamp")
-        await websocket.send_json({
-            "type": "pong",
-            "timestamp": timestamp,
-            "server_time": datetime.now(UTC).isoformat(),
-        })
+        await websocket.send_json(
+            {
+                "type": "pong",
+                "timestamp": timestamp,
+                "server_time": datetime.now(UTC).isoformat(),
+            }
+        )
 
     elif msg_type == "pong":
         # Response to server heartbeat ping
         heartbeat_manager.handle_pong(client_id)
 
     else:
-        await websocket.send_json({
-            "type": "error",
-            "code": "UNKNOWN_MESSAGE_TYPE",
-            "message": f"Unknown message type: {msg_type}",
-        })
+        await websocket.send_json(
+            {
+                "type": "error",
+                "code": "UNKNOWN_MESSAGE_TYPE",
+                "message": f"Unknown message type: {msg_type}",
+            }
+        )

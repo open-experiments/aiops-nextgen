@@ -73,7 +73,7 @@ class SubscriptionManager:
         async with self._lock:
             # Validate event types
             valid_types = []
-            for et in (event_types or []):
+            for et in event_types or []:
                 if et in self.VALID_EVENT_TYPES:
                     valid_types.append(et)
                 else:
@@ -114,9 +114,7 @@ class SubscriptionManager:
             elif client_id in self._subscriptions:
                 # Remove specific event types
                 sub = self._subscriptions[client_id]
-                sub.event_types = [
-                    et for et in sub.event_types if et not in event_types
-                ]
+                sub.event_types = [et for et in sub.event_types if et not in event_types]
                 if not sub.event_types:
                     self._subscriptions.pop(client_id, None)
 

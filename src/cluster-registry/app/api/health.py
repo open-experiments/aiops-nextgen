@@ -43,11 +43,12 @@ async def ready(request: Request):
     # Check database
     try:
         from sqlalchemy import text
+
         async with request.app.state.session_factory() as session:
             await session.execute(text("SELECT 1"))
             checks["database"] = True
     except Exception:
-        pass
+        checks["database"] = False
 
     # Check Redis
     try:
@@ -55,7 +56,7 @@ async def ready(request: Request):
         health_result = await redis.health_check()
         checks["redis"] = health_result.get("status") == "healthy"
     except Exception:
-        pass
+        checks["redis"] = False
 
     all_ready = all(checks.values())
 

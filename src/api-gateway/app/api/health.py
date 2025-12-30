@@ -59,7 +59,7 @@ async def ready(request: Request):
         health_result = await redis.health_check()
         checks["redis"] = health_result.get("status") == "healthy"
     except Exception:
-        pass
+        checks["redis"] = False
 
     all_ready = all(checks.values())
 
@@ -121,9 +121,7 @@ async def health_detailed(request: Request):
     postgres_health = await _check_postgres_health(request)
     components["postgresql"] = postgres_health
 
-    all_healthy = all(
-        c.get("status") == "healthy" for c in components.values()
-    )
+    all_healthy = all(c.get("status") == "healthy" for c in components.values())
 
     return {
         "status": "healthy" if all_healthy else "degraded",

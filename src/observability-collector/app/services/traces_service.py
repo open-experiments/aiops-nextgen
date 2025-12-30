@@ -61,31 +61,32 @@ class TracesService:
         if cluster_id:
             cluster = await self.cluster_registry.get_cluster(cluster_id)
             if not cluster:
-                return [{
-                    "cluster_id": cluster_id,
-                    "cluster_name": "unknown",
-                    "status": "ERROR",
-                    "error": "Cluster not found",
-                    "traces": [],
-                }]
+                return [
+                    {
+                        "cluster_id": cluster_id,
+                        "cluster_name": "unknown",
+                        "status": "ERROR",
+                        "error": "Cluster not found",
+                        "traces": [],
+                    }
+                ]
             clusters = [cluster]
         else:
             clusters = await self.cluster_registry.list_online_clusters()
 
         # Filter to clusters with Tempo configured
-        tempo_clusters = [
-            c for c in clusters
-            if c.get("endpoints", {}).get("tempo_url")
-        ]
+        tempo_clusters = [c for c in clusters if c.get("endpoints", {}).get("tempo_url")]
 
         if not tempo_clusters:
-            return [{
-                "cluster_id": cluster_id or "all",
-                "cluster_name": "N/A",
-                "status": "ERROR",
-                "error": "No clusters with Tempo configured",
-                "traces": [],
-            }]
+            return [
+                {
+                    "cluster_id": cluster_id or "all",
+                    "cluster_name": "N/A",
+                    "status": "ERROR",
+                    "error": "No clusters with Tempo configured",
+                    "traces": [],
+                }
+            ]
 
         # Execute searches concurrently
         tasks = [
@@ -108,13 +109,15 @@ class TracesService:
         processed = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
-                processed.append({
-                    "cluster_id": str(tempo_clusters[i]["id"]),
-                    "cluster_name": tempo_clusters[i]["name"],
-                    "status": "ERROR",
-                    "error": str(result),
-                    "traces": [],
-                })
+                processed.append(
+                    {
+                        "cluster_id": str(tempo_clusters[i]["id"]),
+                        "cluster_name": tempo_clusters[i]["name"],
+                        "status": "ERROR",
+                        "error": str(result),
+                        "traces": [],
+                    }
+                )
             else:
                 processed.append(result)
 
@@ -150,10 +153,7 @@ class TracesService:
 
         # Search all clusters for the trace
         clusters = await self.cluster_registry.list_online_clusters()
-        tempo_clusters = [
-            c for c in clusters
-            if c.get("endpoints", {}).get("tempo_url")
-        ]
+        tempo_clusters = [c for c in clusters if c.get("endpoints", {}).get("tempo_url")]
 
         if not tempo_clusters:
             return {
@@ -196,10 +196,7 @@ class TracesService:
         else:
             clusters = await self.cluster_registry.list_online_clusters()
 
-        tempo_clusters = [
-            c for c in clusters
-            if c.get("endpoints", {}).get("tempo_url")
-        ]
+        tempo_clusters = [c for c in clusters if c.get("endpoints", {}).get("tempo_url")]
 
         if not tempo_clusters:
             return []
@@ -237,18 +234,12 @@ class TracesService:
         else:
             clusters = await self.cluster_registry.list_online_clusters()
 
-        tempo_clusters = [
-            c for c in clusters
-            if c.get("endpoints", {}).get("tempo_url")
-        ]
+        tempo_clusters = [c for c in clusters if c.get("endpoints", {}).get("tempo_url")]
 
         if not tempo_clusters:
             return []
 
-        tasks = [
-            self.collector.get_operations(c, service_name)
-            for c in tempo_clusters
-        ]
+        tasks = [self.collector.get_operations(c, service_name) for c in tempo_clusters]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         # Merge operations from all clusters
@@ -279,24 +270,16 @@ class TracesService:
             cluster = await self.cluster_registry.get_cluster(cluster_id)
             if not cluster:
                 return {"nodes": [], "edges": []}
-            return await self.collector.get_service_graph(
-                cluster, start_time, end_time
-            )
+            return await self.collector.get_service_graph(cluster, start_time, end_time)
 
         # Merge graphs from all clusters
         clusters = await self.cluster_registry.list_online_clusters()
-        tempo_clusters = [
-            c for c in clusters
-            if c.get("endpoints", {}).get("tempo_url")
-        ]
+        tempo_clusters = [c for c in clusters if c.get("endpoints", {}).get("tempo_url")]
 
         if not tempo_clusters:
             return {"nodes": [], "edges": []}
 
-        tasks = [
-            self.collector.get_service_graph(c, start_time, end_time)
-            for c in tempo_clusters
-        ]
+        tasks = [self.collector.get_service_graph(c, start_time, end_time) for c in tempo_clusters]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         # Merge all graphs

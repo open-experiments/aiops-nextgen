@@ -10,7 +10,7 @@ Spec References:
 - specs/08-integration-matrix.md Section 6.1 - Database layout
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
@@ -18,9 +18,9 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision: str = "0001"
-down_revision: Union[str, None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = None
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -84,18 +84,10 @@ def upgrade() -> None:
     )
 
     # Indexes for clusters.clusters
-    op.create_index(
-        "idx_clusters_name", "clusters", ["name"], schema="clusters"
-    )
-    op.create_index(
-        "idx_clusters_cluster_type", "clusters", ["cluster_type"], schema="clusters"
-    )
-    op.create_index(
-        "idx_clusters_environment", "clusters", ["environment"], schema="clusters"
-    )
-    op.create_index(
-        "idx_clusters_region", "clusters", ["region"], schema="clusters"
-    )
+    op.create_index("idx_clusters_name", "clusters", ["name"], schema="clusters")
+    op.create_index("idx_clusters_cluster_type", "clusters", ["cluster_type"], schema="clusters")
+    op.create_index("idx_clusters_environment", "clusters", ["environment"], schema="clusters")
+    op.create_index("idx_clusters_region", "clusters", ["region"], schema="clusters")
 
     # clusters.cluster_health_history table
     op.create_table(

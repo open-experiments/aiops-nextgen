@@ -5,12 +5,12 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
-
 from app.services.credential_validator import (
     CredentialValidator,
     ValidationResult,
     ValidationStatus,
 )
+
 from shared.models import AuthType, ClusterCredentials
 
 
@@ -106,9 +106,7 @@ class TestValidation:
         """Test unreachable cluster returns UNREACHABLE status."""
         with patch("httpx.AsyncClient") as mock_client:
             mock_instance = AsyncMock()
-            mock_instance.get = AsyncMock(
-                side_effect=httpx.ConnectError("Connection refused")
-            )
+            mock_instance.get = AsyncMock(side_effect=httpx.ConnectError("Connection refused"))
             mock_client.return_value.__aenter__.return_value = mock_instance
 
             result = await validator.validate(

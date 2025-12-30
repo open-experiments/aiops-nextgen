@@ -99,9 +99,7 @@ class ClusterRegistryClient:
         """
         return await self.list_clusters(state="ONLINE")
 
-    async def get_cluster_credentials(
-        self, cluster_id: UUID
-    ) -> dict[str, Any] | None:
+    async def get_cluster_credentials(self, cluster_id: UUID) -> dict[str, Any] | None:
         """Get cluster credentials.
 
         Note: This would be used for authenticated access to cluster endpoints.

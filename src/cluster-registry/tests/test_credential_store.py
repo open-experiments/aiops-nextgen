@@ -4,9 +4,9 @@ import base64
 from unittest.mock import MagicMock, patch
 
 import pytest
+from app.services.credential_store import SECRET_NAMESPACE, CredentialStore
 from kubernetes.client.rest import ApiException
 
-from app.services.credential_store import CredentialStore, SECRET_NAMESPACE
 from shared.models import AuthType, ClusterCredentials
 
 
@@ -115,9 +115,7 @@ class TestGetCredentials:
         assert result.auth_type == AuthType.TOKEN
         assert result.token == sample_credentials.token
 
-    async def test_get_returns_none_when_not_found(
-        self, credential_store, mock_k8s_client
-    ):
+    async def test_get_returns_none_when_not_found(self, credential_store, mock_k8s_client):
         """Test getting non-existent credentials returns None."""
         mock_k8s_client.read_namespaced_secret.side_effect = ApiException(status=404)
         credential_store._k8s_client = mock_k8s_client
@@ -137,9 +135,7 @@ class TestDeleteCredentials:
         assert result is True
         mock_k8s_client.delete_namespaced_secret.assert_called_once()
 
-    async def test_delete_returns_false_when_not_found(
-        self, credential_store, mock_k8s_client
-    ):
+    async def test_delete_returns_false_when_not_found(self, credential_store, mock_k8s_client):
         """Test deleting non-existent credentials returns False."""
         mock_k8s_client.delete_namespaced_secret.side_effect = ApiException(status=404)
         credential_store._k8s_client = mock_k8s_client

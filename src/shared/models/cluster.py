@@ -5,7 +5,6 @@ Spec Reference: specs/01-data-models.md Section 2 - Cluster Domain Models
 
 from datetime import datetime
 from enum import Enum
-from typing import Any
 from uuid import UUID
 
 from pydantic import Field, field_validator
@@ -88,9 +87,7 @@ class ClusterStatus(AIOpsBaseModel):
     """
 
     state: ClusterState = ClusterState.UNKNOWN
-    health_score: int = Field(
-        default=0, ge=0, le=100, description="Overall health score (0-100)"
-    )
+    health_score: int = Field(default=0, ge=0, le=100, description="Overall health score (0-100)")
     last_error: str | None = None
     connectivity: Connectivity = Connectivity.DISCONNECTED
     api_server_healthy: bool = False
@@ -124,14 +121,10 @@ class ClusterEndpoints(AIOpsBaseModel):
     Spec Reference: Section 2.4
     """
 
-    prometheus_url: str | None = Field(
-        default=None, description="Prometheus/Thanos query endpoint"
-    )
+    prometheus_url: str | None = Field(default=None, description="Prometheus/Thanos query endpoint")
     tempo_url: str | None = Field(default=None, description="Tempo query endpoint")
     loki_url: str | None = Field(default=None, description="Loki query endpoint")
-    alertmanager_url: str | None = Field(
-        default=None, description="Alertmanager API endpoint"
-    )
+    alertmanager_url: str | None = Field(default=None, description="Alertmanager API endpoint")
 
 
 class Cluster(AIOpsBaseModel):

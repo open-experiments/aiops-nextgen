@@ -12,14 +12,6 @@ All models follow these conventions:
 # Base
 from .base import AIOpsBaseModel
 
-# Common types (Section 8)
-from .common import (
-    ErrorResponse,
-    PaginatedResponse,
-    PaginationParams,
-    TimeRange,
-)
-
 # Cluster domain (Section 2)
 from .cluster import (
     AuthType,
@@ -38,24 +30,20 @@ from .cluster import (
     Platform,
 )
 
-# Observability domain (Section 3)
-from .observability import (
-    Alert,
-    AlertSeverity,
-    AlertState,
-    LogDirection,
-    LogEntry,
-    LogQuery,
-    MetricQuery,
-    MetricResult,
-    MetricResultStatus,
-    MetricResultType,
-    MetricSeries,
-    Span,
-    SpanLog,
-    SpanStatus,
-    Trace,
-    TraceQuery,
+# Common types (Section 8)
+from .common import (
+    ErrorResponse,
+    PaginatedResponse,
+    PaginationParams,
+    TimeRange,
+)
+
+# Event models (Section 6)
+from .events import (
+    Event,
+    EventType,
+    Subscription,
+    SubscriptionRequest,
 )
 
 # GPU domain (Section 4)
@@ -83,12 +71,24 @@ from .intelligence import (
     ToolResultStatus,
 )
 
-# Event models (Section 6)
-from .events import (
-    Event,
-    EventType,
-    Subscription,
-    SubscriptionRequest,
+# Observability domain (Section 3)
+from .observability import (
+    Alert,
+    AlertSeverity,
+    AlertState,
+    LogDirection,
+    LogEntry,
+    LogQuery,
+    MetricQuery,
+    MetricResult,
+    MetricResultStatus,
+    MetricResultType,
+    MetricSeries,
+    Span,
+    SpanLog,
+    SpanStatus,
+    Trace,
+    TraceQuery,
 )
 
 # Report models (Section 7)

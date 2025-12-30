@@ -5,20 +5,19 @@ Spec Reference: specs/02-cluster-registry.md Section 4.1
 
 from __future__ import annotations
 
-from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, HTTPException, Query, Request, status
 
 from shared.observability import get_logger
 
 from ..schemas.cluster import (
     ClusterCreateRequest,
-    ClusterUpdateRequest,
-    ClusterResponse,
-    ClusterListResponse,
     ClusterFilters,
+    ClusterListResponse,
+    ClusterResponse,
     ClusterStatus,
+    ClusterUpdateRequest,
 )
 from ..schemas.credentials import (
     CredentialInput,
@@ -26,9 +25,9 @@ from ..schemas.credentials import (
     ValidationResult,
 )
 from ..services.cluster_service import (
-    ClusterService,
-    ClusterNotFoundError,
     ClusterAlreadyExistsError,
+    ClusterNotFoundError,
+    ClusterService,
 )
 from ..services.credential_service import CredentialService
 
@@ -39,7 +38,6 @@ router = APIRouter()
 
 def get_cluster_service(request: Request) -> ClusterService:
     """Dependency to get ClusterService with database session."""
-    from ..main import settings
 
     # Create a new session for this request
     session_factory = request.app.state.session_factory
@@ -86,7 +84,7 @@ async def create_cluster(
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail={"error": "CLUSTER_ALREADY_EXISTS", "message": str(e)},
-            )
+            ) from e
 
 
 @router.get(
@@ -116,7 +114,7 @@ async def list_clusters(
     redis = request.app.state.redis
 
     # Build filters
-    from shared.models.cluster import ClusterType, Environment, ClusterState
+    from shared.models.cluster import ClusterState, ClusterType, Environment
 
     filters = ClusterFilters(
         name=name,
@@ -161,7 +159,7 @@ async def get_cluster(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={"error": "CLUSTER_NOT_FOUND", "message": str(e)},
-            )
+            ) from e
 
 
 @router.get(
@@ -189,7 +187,7 @@ async def get_cluster_by_name(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={"error": "CLUSTER_NOT_FOUND", "message": str(e)},
-            )
+            ) from e
 
 
 @router.put(
@@ -218,7 +216,7 @@ async def update_cluster(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={"error": "CLUSTER_NOT_FOUND", "message": str(e)},
-            )
+            ) from e
 
 
 @router.delete(
@@ -246,7 +244,7 @@ async def delete_cluster(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={"error": "CLUSTER_NOT_FOUND", "message": str(e)},
-            )
+            ) from e
 
 
 @router.get(
@@ -275,7 +273,7 @@ async def get_cluster_status(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={"error": "CLUSTER_NOT_FOUND", "message": str(e)},
-            )
+            ) from e
 
 
 @router.post(
@@ -303,7 +301,7 @@ async def refresh_cluster(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={"error": "CLUSTER_NOT_FOUND", "message": str(e)},
-            )
+            ) from e
 
 
 # =============================================================================
@@ -339,7 +337,7 @@ async def upload_credentials(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={"error": "CLUSTER_NOT_FOUND", "message": str(e)},
-            )
+            ) from e
 
     cred_service = CredentialService(redis)
     return await cred_service.store(cluster_id, credentials)
@@ -367,7 +365,7 @@ async def rotate_credentials(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"error": "CREDENTIALS_INVALID", "message": str(e)},
-        )
+        ) from e
 
 
 @router.post(

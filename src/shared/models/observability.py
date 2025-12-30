@@ -5,7 +5,6 @@ Spec Reference: specs/01-data-models.md Section 3 - Observability Domain Models
 
 from datetime import datetime
 from enum import Enum
-from typing import Any
 from uuid import UUID
 
 from pydantic import Field
@@ -77,13 +76,9 @@ class MetricQuery(AIOpsBaseModel):
     start_time: datetime | None = Field(
         default=None, description="Query start time (default: now - 1h)"
     )
-    end_time: datetime | None = Field(
-        default=None, description="Query end time (default: now)"
-    )
+    end_time: datetime | None = Field(default=None, description="Query end time (default: now)")
     step: str = Field(default="1m", description="Query resolution step")
-    timeout: int = Field(
-        default=30, ge=1, le=300, description="Query timeout in seconds"
-    )
+    timeout: int = Field(default=30, ge=1, le=300, description="Query timeout in seconds")
 
 
 class MetricSeries(AIOpsBaseModel):
@@ -110,9 +105,7 @@ class MetricResult(AIOpsBaseModel):
     result_type: MetricResultType | None = None
     data: list[MetricSeries] = Field(default_factory=list)
     error: str | None = Field(default=None, description="Error if status != SUCCESS")
-    query_time_ms: int | None = Field(
-        default=None, description="Query execution time in ms"
-    )
+    query_time_ms: int | None = Field(default=None, description="Query execution time in ms")
 
 
 # Trace Models
@@ -228,6 +221,4 @@ class Alert(AIOpsBaseModel):
     annotations: dict[str, str] = Field(default_factory=dict)
     starts_at: datetime
     ends_at: datetime | None = None
-    generator_url: str | None = Field(
-        default=None, description="Link to Prometheus/source"
-    )
+    generator_url: str | None = Field(default=None, description="Link to Prometheus/source")

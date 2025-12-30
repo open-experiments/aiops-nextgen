@@ -25,18 +25,12 @@ class CredentialInput(BaseModel):
     Spec Reference: specs/02-cluster-registry.md Section 4.2
     """
 
-    auth_type: AuthType = Field(
-        default=AuthType.KUBECONFIG, description="Authentication type"
-    )
-    kubeconfig: str | None = Field(
-        None, description="Base64-encoded kubeconfig"
-    )
+    auth_type: AuthType = Field(default=AuthType.KUBECONFIG, description="Authentication type")
+    kubeconfig: str | None = Field(None, description="Base64-encoded kubeconfig")
     token: str | None = Field(None, description="Bearer token")
     certificate: str | None = Field(None, description="Client certificate (PEM)")
     key: str | None = Field(None, description="Client key (PEM)")
-    prometheus_token: str | None = Field(
-        None, description="Token for Prometheus access"
-    )
+    prometheus_token: str | None = Field(None, description="Token for Prometheus access")
     tempo_token: str | None = Field(None, description="Token for Tempo access")
     loki_token: str | None = Field(None, description="Token for Loki access")
 

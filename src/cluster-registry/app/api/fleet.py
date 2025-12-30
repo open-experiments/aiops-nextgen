@@ -9,9 +9,9 @@ from fastapi import APIRouter, Request
 
 from shared.observability import get_logger
 
-from ..schemas.fleet import FleetSummary, FleetHealth, ClusterHealthSummary
-from ..services.cluster_service import ClusterService
 from ..schemas.cluster import ClusterFilters
+from ..schemas.fleet import ClusterHealthSummary, FleetHealth, FleetSummary
+from ..services.cluster_service import ClusterService
 
 logger = get_logger(__name__)
 

@@ -36,12 +36,9 @@ class WebSocketProxy:
         """Get backend WebSocket URL."""
         if self._backend_url is None:
             http_url = getattr(
-                self.settings.services, "realtime_streaming_url",
-                "http://realtime-streaming:8080"
+                self.settings.services, "realtime_streaming_url", "http://realtime-streaming:8080"
             )
-            self._backend_url = http_url.replace(
-                "http://", "ws://"
-            ).replace("https://", "wss://")
+            self._backend_url = http_url.replace("http://", "ws://").replace("https://", "wss://")
         return self._backend_url
 
     def extract_token(self, websocket: WebSocket) -> str | None:
@@ -144,9 +141,7 @@ class WebSocketProxy:
             if client_ws.client_state == WebSocketState.CONNECTED:
                 await client_ws.close(code=1011, reason="Backend unavailable")
 
-    async def _forward_client_to_backend(
-        self, client_ws: WebSocket, backend_ws
-    ) -> None:
+    async def _forward_client_to_backend(self, client_ws: WebSocket, backend_ws) -> None:
         """Forward messages from client to backend.
 
         Args:
@@ -162,9 +157,7 @@ class WebSocketProxy:
         except Exception as e:
             logger.debug("Client to backend forward ended", reason=str(e))
 
-    async def _forward_backend_to_client(
-        self, backend_ws, client_ws: WebSocket
-    ) -> None:
+    async def _forward_backend_to_client(self, backend_ws, client_ws: WebSocket) -> None:
         """Forward messages from backend to client.
 
         Args:
@@ -194,11 +187,13 @@ class WebSocketProxy:
         """
         # Without websockets library, we can't properly connect to backend
         # Just acknowledge the connection and let client know
-        await client_ws.send_json({
-            "type": "error",
-            "code": "PROXY_UNAVAILABLE",
-            "message": "WebSocket proxy not available. Connect directly to realtime-streaming.",
-        })
+        await client_ws.send_json(
+            {
+                "type": "error",
+                "code": "PROXY_UNAVAILABLE",
+                "message": "WebSocket proxy not available. Connect directly to realtime-streaming.",
+            }
+        )
         await client_ws.close(code=1011, reason="Proxy not configured")
 
 

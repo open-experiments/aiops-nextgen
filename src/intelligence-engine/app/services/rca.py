@@ -113,9 +113,7 @@ class RootCauseAnalyzer:
 
         for _cluster_id, cluster_anomalies in by_cluster.items():
             # Sort by time
-            sorted_anomalies = sorted(
-                cluster_anomalies, key=lambda a: a.detected_at
-            )
+            sorted_anomalies = sorted(cluster_anomalies, key=lambda a: a.detected_at)
 
             # Find temporal correlations
             correlations = self._find_temporal_correlations(sorted_anomalies)
@@ -176,15 +174,13 @@ class RootCauseAnalyzer:
                 ):
                     # Look for anomalies in the dependency metric
                     for other in anomalies:
-                        if self._metric_matches(
-                            other.metric_name, [dep_metric]
-                        ) and str(other.id) != str(anomaly.id):
+                        if self._metric_matches(other.metric_name, [dep_metric]) and str(
+                            other.id
+                        ) != str(anomaly.id):
                             # Calculate correlation score based on severity
                             score = self._calculate_correlation_score(anomaly, other)
                             if score >= self.config.correlation_threshold:
-                                correlations[str(anomaly.id)].append(
-                                    (str(other.id), score)
-                                )
+                                correlations[str(anomaly.id)].append((str(other.id), score))
 
         return correlations
 
@@ -203,10 +199,7 @@ class RootCauseAnalyzer:
 
         # Boost for same labels (same namespace, pod, etc.)
         shared_labels = set(anomaly1.labels.keys()) & set(anomaly2.labels.keys())
-        label_match = sum(
-            1 for k in shared_labels
-            if anomaly1.labels[k] == anomaly2.labels[k]
-        )
+        label_match = sum(1 for k in shared_labels if anomaly1.labels[k] == anomaly2.labels[k])
         score += label_match * 0.1
 
         # Boost for close timing
@@ -308,9 +301,7 @@ class RootCauseAnalyzer:
 
         # Higher correlation scores = higher confidence
         avg_correlation = (
-            sum(c.correlation_score for c in correlated) / len(correlated)
-            if correlated
-            else 0
+            sum(c.correlation_score for c in correlated) / len(correlated) if correlated else 0
         )
 
         return min(base_confidence + correlation_boost + avg_correlation * 0.2, 1.0)
@@ -354,29 +345,37 @@ class RootCauseAnalyzer:
         metric = primary.metric_name
 
         if "cpu" in metric:
-            recommendations.extend([
-                "Check for CPU-intensive processes",
-                "Consider horizontal scaling",
-                "Review resource limits and requests",
-            ])
+            recommendations.extend(
+                [
+                    "Check for CPU-intensive processes",
+                    "Consider horizontal scaling",
+                    "Review resource limits and requests",
+                ]
+            )
         elif "memory" in metric:
-            recommendations.extend([
-                "Check for memory leaks",
-                "Increase memory limits if appropriate",
-                "Review application memory usage patterns",
-            ])
+            recommendations.extend(
+                [
+                    "Check for memory leaks",
+                    "Increase memory limits if appropriate",
+                    "Review application memory usage patterns",
+                ]
+            )
         elif "gpu" in metric:
-            recommendations.extend([
-                "Review GPU workload scheduling",
-                "Check for GPU memory fragmentation",
-                "Consider workload balancing across GPUs",
-            ])
+            recommendations.extend(
+                [
+                    "Review GPU workload scheduling",
+                    "Check for GPU memory fragmentation",
+                    "Consider workload balancing across GPUs",
+                ]
+            )
         elif "latency" in metric or "5xx" in metric:
-            recommendations.extend([
-                "Check backend service health",
-                "Review recent deployments",
-                "Examine database query performance",
-            ])
+            recommendations.extend(
+                [
+                    "Check backend service health",
+                    "Review recent deployments",
+                    "Examine database query performance",
+                ]
+            )
 
         # Add generic recommendations
         recommendations.append(f"Investigate primary anomaly in {metric}")

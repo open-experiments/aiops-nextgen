@@ -104,10 +104,7 @@ class PrometheusClient:
         """Build authentication headers."""
         headers = {}
 
-        if (
-            self.auth_config.auth_type == PrometheusAuthType.BEARER
-            and self.auth_config.token
-        ):
+        if self.auth_config.auth_type == PrometheusAuthType.BEARER and self.auth_config.token:
             headers["Authorization"] = f"Bearer {self.auth_config.token}"
 
         return headers
@@ -354,10 +351,7 @@ class PrometheusClient:
 
             if result_type == MetricResultType.MATRIX:
                 # Range query - has "values" array
-                values = [
-                    {"timestamp": v[0], "value": float(v[1])}
-                    for v in item.get("values", [])
-                ]
+                values = [{"timestamp": v[0], "value": float(v[1])} for v in item.get("values", [])]
             else:
                 # Instant query - has single "value"
                 v = item.get("value", [0, "0"])

@@ -43,9 +43,7 @@ class Report(AIOpsBaseModel):
     format: ReportFormat
     cluster_scope: list[UUID] = Field(default_factory=list)
     time_range: TimeRange | None = None
-    generated_by: str = Field(
-        description="User or 'system' for scheduled reports"
-    )
+    generated_by: str = Field(description="User or 'system' for scheduled reports")
     storage_path: str = Field(description="Object storage path")
     size_bytes: int
     created_at: datetime

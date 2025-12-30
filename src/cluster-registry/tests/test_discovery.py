@@ -1,9 +1,8 @@
 """Tests for discovery service."""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-
 from app.services.discovery import (
     ComponentStatus,
     DiscoveredComponent,
@@ -26,11 +25,7 @@ class TestPrometheusDiscovery:
         """Test Prometheus discovery in openshift-monitoring namespace."""
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {
-            "spec": {
-                "ports": [{"name": "web", "port": 9090}]
-            }
-        }
+        mock_response.json.return_value = {"spec": {"ports": [{"name": "web", "port": 9090}]}}
 
         mock_instance = AsyncMock()
         mock_instance.get = AsyncMock(return_value=mock_response)
@@ -103,11 +98,7 @@ class TestLokiDiscovery:
         """Test Loki discovery."""
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {
-            "spec": {
-                "ports": [{"name": "http", "port": 3100}]
-            }
-        }
+        mock_response.json.return_value = {"spec": {"ports": [{"name": "http", "port": 3100}]}}
 
         mock_instance = AsyncMock()
         mock_instance.get = AsyncMock(return_value=mock_response)
@@ -126,11 +117,7 @@ class TestTempoDiscovery:
         """Test Tempo discovery."""
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {
-            "spec": {
-                "ports": [{"name": "http", "port": 3200}]
-            }
-        }
+        mock_response.json.return_value = {"spec": {"ports": [{"name": "http", "port": 3200}]}}
 
         mock_instance = AsyncMock()
         mock_instance.get = AsyncMock(return_value=mock_response)
@@ -171,9 +158,7 @@ class TestCapabilities:
             DiscoveredComponent(name="sriov", status=ComponentStatus.DISCOVERED),
         ]
 
-        capabilities = discovery_service._build_capabilities(
-            prometheus, loki, tempo, gpu, cnf
-        )
+        capabilities = discovery_service._build_capabilities(prometheus, loki, tempo, gpu, cnf)
 
         assert capabilities.has_gpu is True
         assert capabilities.has_prometheus is True

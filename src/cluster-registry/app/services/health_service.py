@@ -13,9 +13,9 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from shared.config import ClusterRegistrySettings
+from shared.models.cluster import ClusterState, ClusterType
 from shared.observability import get_logger
 from shared.redis_client import RedisClient
-from shared.models.cluster import ClusterState, ClusterType
 
 from ..repositories.cluster_repository import ClusterRepository
 from .event_service import EventService

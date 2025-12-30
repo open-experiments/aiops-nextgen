@@ -15,22 +15,14 @@ class FleetSummary(BaseModel):
     """
 
     total_clusters: int = Field(description="Total number of clusters")
-    by_state: dict[str, int] = Field(
-        default_factory=dict, description="Cluster count by state"
-    )
-    by_type: dict[str, int] = Field(
-        default_factory=dict, description="Cluster count by type"
-    )
+    by_state: dict[str, int] = Field(default_factory=dict, description="Cluster count by state")
+    by_type: dict[str, int] = Field(default_factory=dict, description="Cluster count by type")
     by_environment: dict[str, int] = Field(
         default_factory=dict, description="Cluster count by environment"
     )
     total_gpu_count: int = Field(default=0, description="Total GPU count across fleet")
-    clusters_with_cnf: int = Field(
-        default=0, description="Clusters with CNF workloads"
-    )
-    avg_health_score: float = Field(
-        default=0.0, description="Average health score across fleet"
-    )
+    clusters_with_cnf: int = Field(default=0, description="Clusters with CNF workloads")
+    avg_health_score: float = Field(default=0.0, description="Average health score across fleet")
 
 
 class ClusterHealthSummary(BaseModel):

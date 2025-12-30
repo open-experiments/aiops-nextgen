@@ -76,21 +76,13 @@ async def generate_report(request: GenerateReportRequest) -> GenerateReportRespo
 
     # Generate content again for response
     if report_type == ReportType.EXECUTIVE_SUMMARY:
-        data = await report_generator._generate_executive_summary(
-            request.cluster_ids, start, now
-        )
+        data = await report_generator._generate_executive_summary(request.cluster_ids, start, now)
     elif report_type == ReportType.DETAILED_ANALYSIS:
-        data = await report_generator._generate_detailed_analysis(
-            request.cluster_ids, start, now
-        )
+        data = await report_generator._generate_detailed_analysis(request.cluster_ids, start, now)
     elif report_type == ReportType.INCIDENT_REPORT:
-        data = await report_generator._generate_incident_report(
-            request.cluster_ids, start, now
-        )
+        data = await report_generator._generate_incident_report(request.cluster_ids, start, now)
     else:
-        data = await report_generator._generate_capacity_plan(
-            request.cluster_ids, start, now
-        )
+        data = await report_generator._generate_capacity_plan(request.cluster_ids, start, now)
 
     content = report_generator._format_report(data, report_format)
 

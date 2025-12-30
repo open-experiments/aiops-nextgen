@@ -52,9 +52,7 @@ class Event(AIOpsBaseModel):
     event_type: EventType
     cluster_id: UUID | None = None
     timestamp: datetime
-    payload: dict[str, Any] = Field(
-        default_factory=dict, description="Event-specific payload"
-    )
+    payload: dict[str, Any] = Field(default_factory=dict, description="Event-specific payload")
 
 
 class Subscription(AIOpsBaseModel):
@@ -66,15 +64,11 @@ class Subscription(AIOpsBaseModel):
 
     id: UUID
     client_id: str = Field(description="WebSocket client identifier")
-    event_types: list[EventType] = Field(
-        default_factory=list, description="Event types to receive"
-    )
+    event_types: list[EventType] = Field(default_factory=list, description="Event types to receive")
     cluster_filter: list[UUID] = Field(
         default_factory=list, description="Filter by cluster IDs (empty = all)"
     )
-    namespace_filter: list[str] = Field(
-        default_factory=list, description="Filter by namespaces"
-    )
+    namespace_filter: list[str] = Field(default_factory=list, description="Filter by namespaces")
     created_at: datetime
 
 

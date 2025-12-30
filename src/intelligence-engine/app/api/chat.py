@@ -111,9 +111,9 @@ async def send_message(
     try:
         return await chat_service.send_message(session_id, body.content)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/sessions/{session_id}/stream")

@@ -5,19 +5,18 @@ Spec Reference: specs/02-cluster-registry.md Section 4.2
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
-from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
-import re
 
 from shared.models.cluster import (
-    ClusterType,
-    Platform,
-    Environment,
     ClusterState,
+    ClusterType,
     Connectivity,
+    Environment,
+    Platform,
 )
 
 
@@ -88,17 +87,13 @@ class ClusterCreateRequest(BaseModel):
     cluster_type: ClusterType = Field(
         default=ClusterType.SPOKE, description="Cluster type in hierarchy"
     )
-    platform: Platform = Field(
-        default=Platform.OPENSHIFT, description="Kubernetes platform"
-    )
+    platform: Platform = Field(default=Platform.OPENSHIFT, description="Kubernetes platform")
     platform_version: str | None = Field(None, description="Platform version")
     region: str | None = Field(None, max_length=64, description="Geographic region")
     environment: Environment = Field(
         default=Environment.DEVELOPMENT, description="Deployment environment"
     )
-    labels: dict[str, str] = Field(
-        default_factory=dict, description="Custom labels for filtering"
-    )
+    labels: dict[str, str] = Field(default_factory=dict, description="Custom labels for filtering")
     endpoints: ClusterEndpoints = Field(
         default_factory=ClusterEndpoints, description="Observability endpoints"
     )
@@ -195,10 +190,6 @@ class ClusterFilters(BaseModel):
     state: ClusterState | None = Field(None, description="Filter by status state")
     has_gpu: bool | None = Field(None, description="Filter clusters with GPU nodes")
     has_cnf: bool | None = Field(None, description="Filter clusters with CNF workloads")
-    label: str | None = Field(
-        None, description="Filter by label (key=value format)"
-    )
+    label: str | None = Field(None, description="Filter by label (key=value format)")
     page: int = Field(default=1, ge=1, description="Page number")
-    page_size: int = Field(
-        default=20, ge=1, le=100, description="Items per page"
-    )
+    page_size: int = Field(default=20, ge=1, le=100, description="Items per page")

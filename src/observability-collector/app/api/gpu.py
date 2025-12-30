@@ -10,9 +10,8 @@ from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
-from shared.models.gpu import GPU, GPUNode, GPUProcess
 from shared.observability import get_logger
 
 from ..services.gpu_service import GPUService
@@ -86,7 +85,7 @@ async def list_gpu_nodes(
         return nodes
     except Exception as e:
         logger.error("List GPU nodes failed", error=str(e))
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get(
@@ -123,7 +122,7 @@ async def get_gpu_node(
             cluster_id=str(cluster_id),
             node_name=node_name,
         )
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get(
@@ -147,7 +146,7 @@ async def get_gpu_summary(request: Request):
         return summary
     except Exception as e:
         logger.error("Get GPU summary failed", error=str(e))
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get(
@@ -175,4 +174,4 @@ async def list_gpu_processes(
         return {"processes": processes, "total": len(processes)}
     except Exception as e:
         logger.error("List GPU processes failed", error=str(e))
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

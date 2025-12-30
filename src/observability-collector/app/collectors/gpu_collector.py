@@ -75,9 +75,7 @@ class GPUCollector:
         # In dev mode, try service account token if no token provided
         if not token and self.settings.is_development:
             try:
-                with open(
-                    "/var/run/secrets/kubernetes.io/serviceaccount/token"
-                ) as f:
+                with open("/var/run/secrets/kubernetes.io/serviceaccount/token") as f:
                     token = f.read().strip()
             except FileNotFoundError:
                 pass
@@ -216,9 +214,7 @@ class GPUCollector:
 
         try:
             # Find nvidia daemonset pod on this node
-            pod_info = await self._find_nvidia_pod_on_node(
-                api_url, headers, node_name
-            )
+            pod_info = await self._find_nvidia_pod_on_node(api_url, headers, node_name)
 
             if pod_info:
                 # Execute nvidia-smi on the pod
@@ -277,9 +273,7 @@ class GPUCollector:
             params = {"fieldSelector": f"spec.nodeName={node_name}"}
 
             try:
-                response = await self.client.get(
-                    pods_url, headers=headers, params=params
-                )
+                response = await self.client.get(pods_url, headers=headers, params=params)
                 if response.status_code != 200:
                     continue
 
@@ -328,9 +322,7 @@ class GPUCollector:
     ) -> list[dict[str, Any]] | None:
         """Execute nvidia-smi via K8s exec API and parse output."""
         # Build exec URL
-        exec_url = (
-            f"{api_url}/api/v1/namespaces/{namespace}/pods/{pod_name}/exec"
-        )
+        exec_url = f"{api_url}/api/v1/namespaces/{namespace}/pods/{pod_name}/exec"
 
         # nvidia-smi command for GPU metrics
         cmd = " ".join(self.NVIDIA_SMI_CMD)
@@ -382,35 +374,35 @@ class GPUCollector:
                 continue
 
             try:
-                gpus.append({
-                    "index": int(fields[0]),
-                    "uuid": fields[1],
-                    "name": fields[2],
-                    "driver_version": fields[3],
-                    "memory_total_mb": int(float(fields[4])),
-                    "memory_used_mb": int(float(fields[5])),
-                    "memory_free_mb": int(float(fields[6])),
-                    "utilization_gpu_percent": int(float(fields[7])),
-                    "utilization_memory_percent": int(float(fields[8])),
-                    "temperature_celsius": int(float(fields[9])),
-                    "power_draw_watts": float(fields[10]),
-                    "power_limit_watts": float(fields[11]),
-                    "fan_speed_percent": (
-                        int(float(fields[12]))
-                        if fields[12] not in ("[N/A]", "N/A", "")
-                        else None
-                    ),
-                    "processes": [],
-                })
+                gpus.append(
+                    {
+                        "index": int(fields[0]),
+                        "uuid": fields[1],
+                        "name": fields[2],
+                        "driver_version": fields[3],
+                        "memory_total_mb": int(float(fields[4])),
+                        "memory_used_mb": int(float(fields[5])),
+                        "memory_free_mb": int(float(fields[6])),
+                        "utilization_gpu_percent": int(float(fields[7])),
+                        "utilization_memory_percent": int(float(fields[8])),
+                        "temperature_celsius": int(float(fields[9])),
+                        "power_draw_watts": float(fields[10]),
+                        "power_limit_watts": float(fields[11]),
+                        "fan_speed_percent": (
+                            int(float(fields[12]))
+                            if fields[12] not in ("[N/A]", "N/A", "")
+                            else None
+                        ),
+                        "processes": [],
+                    }
+                )
             except (ValueError, IndexError) as e:
                 logger.debug("Failed to parse GPU line", line=line, error=str(e))
                 continue
 
         return gpus
 
-    def _parse_nvidia_smi_processes(
-        self, output: str, gpus: list[dict[str, Any]]
-    ) -> None:
+    def _parse_nvidia_smi_processes(self, output: str, gpus: list[dict[str, Any]]) -> None:
         """Parse nvidia-smi process output and attach to GPUs."""
         # Build UUID to GPU mapping
         uuid_to_gpu = {gpu["uuid"]: gpu for gpu in gpus}
@@ -426,12 +418,14 @@ class GPUCollector:
             try:
                 gpu_uuid = fields[3]
                 if gpu_uuid in uuid_to_gpu:
-                    uuid_to_gpu[gpu_uuid]["processes"].append({
-                        "pid": int(fields[0]),
-                        "process_name": fields[1],
-                        "used_memory_mb": int(float(fields[2])),
-                        "type": "COMPUTE",
-                    })
+                    uuid_to_gpu[gpu_uuid]["processes"].append(
+                        {
+                            "pid": int(fields[0]),
+                            "process_name": fields[1],
+                            "used_memory_mb": int(float(fields[2])),
+                            "type": "COMPUTE",
+                        }
+                    )
             except (ValueError, IndexError):
                 continue
 
@@ -453,9 +447,7 @@ class GPUCollector:
             for i in range(1, nodes_count + 1)
         ]
 
-    def _get_mock_node_data(
-        self, cluster: dict, node_name: str
-    ) -> dict[str, Any]:
+    def _get_mock_node_data(self, cluster: dict, node_name: str) -> dict[str, Any]:
         """Generate mock GPU data for a single node."""
         try:
             node_index = int(node_name.split("-")[-1])
@@ -497,23 +489,25 @@ class GPUCollector:
             utilization = (50 + (node_index * 10 + i * 5)) % 100
             memory_used = int(memory_total * utilization / 100 * 0.8)
 
-            gpus.append({
-                "index": i % gpus_per_node,
-                "uuid": f"GPU-{cluster['id'][:8]}-{node_index:02d}-{i:02d}",
-                "name": gpu_type,
-                "driver_version": "535.104.12",
-                "cuda_version": "12.2",
-                "memory_total_mb": memory_total,
-                "memory_used_mb": memory_used,
-                "memory_free_mb": memory_total - memory_used,
-                "utilization_gpu_percent": utilization,
-                "utilization_memory_percent": int(memory_used / memory_total * 100),
-                "temperature_celsius": 55 + utilization // 5,
-                "power_draw_watts": 100 + utilization * 2,
-                "power_limit_watts": 400,
-                "fan_speed_percent": 30 + utilization // 3,
-                "processes": self._generate_mock_processes(utilization),
-            })
+            gpus.append(
+                {
+                    "index": i % gpus_per_node,
+                    "uuid": f"GPU-{cluster['id'][:8]}-{node_index:02d}-{i:02d}",
+                    "name": gpu_type,
+                    "driver_version": "535.104.12",
+                    "cuda_version": "12.2",
+                    "memory_total_mb": memory_total,
+                    "memory_used_mb": memory_used,
+                    "memory_free_mb": memory_total - memory_used,
+                    "utilization_gpu_percent": utilization,
+                    "utilization_memory_percent": int(memory_used / memory_total * 100),
+                    "temperature_celsius": 55 + utilization // 5,
+                    "power_draw_watts": 100 + utilization * 2,
+                    "power_limit_watts": 400,
+                    "fan_speed_percent": 30 + utilization // 3,
+                    "processes": self._generate_mock_processes(utilization),
+                }
+            )
 
         return gpus
 
@@ -524,19 +518,23 @@ class GPUCollector:
 
         processes = []
         if utilization >= 20:
-            processes.append({
-                "pid": 12345 + utilization,
-                "process_name": "python",
-                "used_memory_mb": int(utilization * 100),
-                "type": "COMPUTE",
-            })
+            processes.append(
+                {
+                    "pid": 12345 + utilization,
+                    "process_name": "python",
+                    "used_memory_mb": int(utilization * 100),
+                    "type": "COMPUTE",
+                }
+            )
         if utilization >= 50:
-            processes.append({
-                "pid": 12346 + utilization,
-                "process_name": "pytorch",
-                "used_memory_mb": int(utilization * 200),
-                "type": "COMPUTE",
-            })
+            processes.append(
+                {
+                    "pid": 12346 + utilization,
+                    "process_name": "pytorch",
+                    "used_memory_mb": int(utilization * 200),
+                    "type": "COMPUTE",
+                }
+            )
 
         return processes
 

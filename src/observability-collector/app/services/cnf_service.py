@@ -57,9 +57,7 @@ class CNFService:
         clusters = await self._get_cnf_clusters(cluster_ids)
 
         # Query clusters in parallel
-        tasks = [
-            self._get_cluster_workloads(cluster) for cluster in clusters
-        ]
+        tasks = [self._get_cluster_workloads(cluster) for cluster in clusters]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         workloads = []
@@ -71,10 +69,7 @@ class CNFService:
 
         # Filter by type if specified
         if workload_type:
-            workloads = [
-                w for w in workloads
-                if w.get("type", "").lower() == workload_type.lower()
-            ]
+            workloads = [w for w in workloads if w.get("type", "").lower() == workload_type.lower()]
 
         return {
             "workloads": workloads,
@@ -95,9 +90,7 @@ class CNFService:
         """
         clusters = await self._get_ptp_clusters(cluster_ids)
 
-        tasks = [
-            self._get_cluster_ptp_status(cluster) for cluster in clusters
-        ]
+        tasks = [self._get_cluster_ptp_status(cluster) for cluster in clusters]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         statuses = []
@@ -111,9 +104,7 @@ class CNFService:
         locked_count = sum(1 for s in statuses if s.get("state") == "LOCKED")
         freerun_count = sum(1 for s in statuses if s.get("state") == "FREERUN")
         avg_offset = (
-            sum(abs(s.get("offset_ns", 0)) for s in statuses) / len(statuses)
-            if statuses
-            else 0
+            sum(abs(s.get("offset_ns", 0)) for s in statuses) / len(statuses) if statuses else 0
         )
 
         return {
@@ -140,9 +131,7 @@ class CNFService:
         """
         clusters = await self._get_sriov_clusters(cluster_ids)
 
-        tasks = [
-            self._get_cluster_sriov_status(cluster) for cluster in clusters
-        ]
+        tasks = [self._get_cluster_sriov_status(cluster) for cluster in clusters]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         statuses = []
@@ -163,9 +152,7 @@ class CNFService:
                 "total_vfs_capacity": total_vfs,
                 "configured_vfs": configured_vfs,
                 "utilization_percent": (
-                    round(configured_vfs / total_vfs * 100, 1)
-                    if total_vfs > 0
-                    else 0
+                    round(configured_vfs / total_vfs * 100, 1) if total_vfs > 0 else 0
                 ),
             },
             "clusters_queried": len(clusters),
@@ -200,9 +187,7 @@ class CNFService:
             return None
 
         try:
-            stats = await self.cnf_collector.get_dpdk_stats(
-                cluster, namespace, pod_name
-            )
+            stats = await self.cnf_collector.get_dpdk_stats(cluster, namespace, pod_name)
 
             if stats:
                 await self.redis.cache_set("dpdk", cache_key, stats, self.CACHE_TTL)
@@ -229,15 +214,15 @@ class CNFService:
         sriov_task = self.get_sriov_status()
 
         workloads_result, ptp_result, sriov_result = await asyncio.gather(
-            workloads_task, ptp_task, sriov_task,
+            workloads_task,
+            ptp_task,
+            sriov_task,
             return_exceptions=True,
         )
 
         # Process workloads
         workloads = (
-            workloads_result.get("workloads", [])
-            if isinstance(workloads_result, dict)
-            else []
+            workloads_result.get("workloads", []) if isinstance(workloads_result, dict) else []
         )
         workload_types: dict[str, int] = {}
         for w in workloads:
@@ -245,18 +230,10 @@ class CNFService:
             workload_types[wtype] = workload_types.get(wtype, 0) + 1
 
         # Process PTP
-        ptp_summary = (
-            ptp_result.get("summary", {})
-            if isinstance(ptp_result, dict)
-            else {}
-        )
+        ptp_summary = ptp_result.get("summary", {}) if isinstance(ptp_result, dict) else {}
 
         # Process SR-IOV
-        sriov_summary = (
-            sriov_result.get("summary", {})
-            if isinstance(sriov_result, dict)
-            else {}
-        )
+        sriov_summary = sriov_result.get("summary", {}) if isinstance(sriov_result, dict) else {}
 
         return {
             "workloads": {
@@ -271,9 +248,7 @@ class CNFService:
     # Internal helpers
     # ==========================================================================
 
-    async def _get_cnf_clusters(
-        self, cluster_ids: list[UUID] | None = None
-    ) -> list[dict]:
+    async def _get_cnf_clusters(self, cluster_ids: list[UUID] | None = None) -> list[dict]:
         """Get clusters with CNF capability."""
         try:
             if cluster_ids:
@@ -285,17 +260,12 @@ class CNFService:
                 return clusters
             else:
                 all_clusters = await self.cluster_registry.list_online_clusters()
-                return [
-                    c for c in all_clusters
-                    if c.get("capabilities", {}).get("cnf_types")
-                ]
+                return [c for c in all_clusters if c.get("capabilities", {}).get("cnf_types")]
         except Exception as e:
             logger.error("Failed to get CNF clusters", error=str(e))
             return []
 
-    async def _get_ptp_clusters(
-        self, cluster_ids: list[UUID] | None = None
-    ) -> list[dict]:
+    async def _get_ptp_clusters(self, cluster_ids: list[UUID] | None = None) -> list[dict]:
         """Get clusters with PTP capability."""
         try:
             if cluster_ids:
@@ -307,17 +277,12 @@ class CNFService:
                 return clusters
             else:
                 all_clusters = await self.cluster_registry.list_online_clusters()
-                return [
-                    c for c in all_clusters
-                    if c.get("capabilities", {}).get("has_ptp")
-                ]
+                return [c for c in all_clusters if c.get("capabilities", {}).get("has_ptp")]
         except Exception as e:
             logger.error("Failed to get PTP clusters", error=str(e))
             return []
 
-    async def _get_sriov_clusters(
-        self, cluster_ids: list[UUID] | None = None
-    ) -> list[dict]:
+    async def _get_sriov_clusters(self, cluster_ids: list[UUID] | None = None) -> list[dict]:
         """Get clusters with SR-IOV capability."""
         try:
             if cluster_ids:
@@ -329,10 +294,7 @@ class CNFService:
                 return clusters
             else:
                 all_clusters = await self.cluster_registry.list_online_clusters()
-                return [
-                    c for c in all_clusters
-                    if c.get("capabilities", {}).get("has_sriov")
-                ]
+                return [c for c in all_clusters if c.get("capabilities", {}).get("has_sriov")]
         except Exception as e:
             logger.error("Failed to get SR-IOV clusters", error=str(e))
             return []

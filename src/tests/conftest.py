@@ -5,14 +5,11 @@ Spec Reference: Development testing infrastructure
 
 import asyncio
 import os
-from collections.abc import AsyncGenerator, Generator
+from collections.abc import Generator
 from typing import Any
 from uuid import uuid4
 
 import pytest
-import pytest_asyncio
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
 
 # Set test environment before importing settings
 os.environ["ENV"] = "development"
@@ -106,7 +103,5 @@ def mock_settings() -> dict[str, Any]:
 def pytest_configure(config: pytest.Config) -> None:
     """Register custom markers."""
     config.addinivalue_line("markers", "unit: Unit tests (no external dependencies)")
-    config.addinivalue_line(
-        "markers", "integration: Integration tests (require external services)"
-    )
+    config.addinivalue_line("markers", "integration: Integration tests (require external services)")
     config.addinivalue_line("markers", "slow: Slow tests")

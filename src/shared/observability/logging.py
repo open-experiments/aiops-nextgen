@@ -14,7 +14,7 @@ Features:
 import logging
 import sys
 from contextvars import ContextVar
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import structlog
@@ -64,7 +64,7 @@ def add_timestamp(
     event_dict: EventDict,
 ) -> EventDict:
     """Add ISO 8601 timestamp."""
-    event_dict["timestamp"] = datetime.now(timezone.utc).isoformat()
+    event_dict["timestamp"] = datetime.now(UTC).isoformat()
     return event_dict
 
 
@@ -86,7 +86,7 @@ def setup_logging(
     fmt = log_format or settings.log_format
 
     # Convert LogLevel enum to logging constant (handle both enum and string)
-    level_str = level.value if hasattr(level, 'value') else str(level).upper()
+    level_str = level.value if hasattr(level, "value") else str(level).upper()
     numeric_level = getattr(logging, level_str)
 
     # Configure standard library logging
@@ -110,7 +110,7 @@ def setup_logging(
     ]
 
     # Handle both enum and string for format
-    fmt_str = fmt.value if hasattr(fmt, 'value') else str(fmt).lower()
+    fmt_str = fmt.value if hasattr(fmt, "value") else str(fmt).lower()
     if fmt_str == "json" or fmt == LogFormat.JSON:
         # JSON format for production
         processors = shared_processors + [
@@ -185,7 +185,7 @@ class RequestContextManager:
         return self
 
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
-        for token in reversed(self._tokens):
+        for _token in reversed(self._tokens):
             # Reset context vars (structlog handles cleanup)
             pass
 

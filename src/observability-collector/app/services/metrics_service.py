@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
-import time
 from datetime import datetime
 from typing import Any
 from uuid import UUID
@@ -80,14 +79,16 @@ class MetricsService:
 
         for cluster, result in zip(clusters, results):
             if isinstance(result, Exception):
-                processed_results.append({
-                    "cluster_id": str(cluster["id"]),
-                    "cluster_name": cluster["name"],
-                    "status": "ERROR",
-                    "error": str(result),
-                    "data": [],
-                    "query_time_ms": 0,
-                })
+                processed_results.append(
+                    {
+                        "cluster_id": str(cluster["id"]),
+                        "cluster_name": cluster["name"],
+                        "status": "ERROR",
+                        "error": str(result),
+                        "data": [],
+                        "query_time_ms": 0,
+                    }
+                )
             else:
                 processed_results.append(result)
                 if result.get("status") == "SUCCESS":
@@ -131,9 +132,7 @@ class MetricsService:
         # Execute queries in parallel
         tasks = []
         for cluster in clusters:
-            task = self._query_range_cluster(
-                cluster, query, start_time, end_time, step, timeout
-            )
+            task = self._query_range_cluster(cluster, query, start_time, end_time, step, timeout)
             tasks.append(task)
 
         results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -144,14 +143,16 @@ class MetricsService:
 
         for cluster, result in zip(clusters, results):
             if isinstance(result, Exception):
-                processed_results.append({
-                    "cluster_id": str(cluster["id"]),
-                    "cluster_name": cluster["name"],
-                    "status": "ERROR",
-                    "error": str(result),
-                    "data": [],
-                    "query_time_ms": 0,
-                })
+                processed_results.append(
+                    {
+                        "cluster_id": str(cluster["id"]),
+                        "cluster_name": cluster["name"],
+                        "status": "ERROR",
+                        "error": str(result),
+                        "data": [],
+                        "query_time_ms": 0,
+                    }
+                )
             else:
                 processed_results.append(result)
                 if result.get("status") == "SUCCESS":
@@ -204,9 +205,7 @@ class MetricsService:
 
         return labels_by_cluster
 
-    async def _get_target_clusters(
-        self, cluster_ids: list[UUID] | None = None
-    ) -> list[dict]:
+    async def _get_target_clusters(self, cluster_ids: list[UUID] | None = None) -> list[dict]:
         """Get target clusters for query."""
         try:
             if cluster_ids:
@@ -283,15 +282,11 @@ class MetricsService:
         # Determine cache TTL based on range duration
         duration = (end_time - start_time).total_seconds()
         cache_ttl = (
-            self.RANGE_QUERY_SHORT_CACHE_TTL
-            if duration < 3600
-            else self.RANGE_QUERY_LONG_CACHE_TTL
+            self.RANGE_QUERY_SHORT_CACHE_TTL if duration < 3600 else self.RANGE_QUERY_LONG_CACHE_TTL
         )
 
         # Check cache
-        cache_key = self._get_range_cache_key(
-            query, cluster["id"], start_time, end_time, step
-        )
+        cache_key = self._get_range_cache_key(query, cluster["id"], start_time, end_time, step)
         cached = await self.redis.cache_get_json("metrics", cache_key)
         if cached:
             return cached
