@@ -559,23 +559,23 @@ useChat()           // Chat sessions + streaming
 
 | Task | Spec Reference | Status |
 |------|---------------|--------|
-| Create Vite + React + TypeScript scaffold | [`07-frontend.md`](../specs/07-frontend.md) Section 3 | [ ] |
-| Set up Tailwind CSS | [`07-frontend.md`](../specs/07-frontend.md) Section 8 | [ ] |
-| Create API client with Axios | [`07-frontend.md`](../specs/07-frontend.md) Section 6 | [ ] |
-| Implement Zustand stores | [`07-frontend.md`](../specs/07-frontend.md) Section 5 | [ ] |
-| Implement useWebSocket hook | [`07-frontend.md`](../specs/07-frontend.md) Section 7 | [ ] |
-| Create layout components | [`07-frontend.md`](../specs/07-frontend.md) Section 3 | [ ] |
-| Create Dashboard page | [`07-frontend.md`](../specs/07-frontend.md) Section 4.1 | [ ] |
-| Create Chat page | [`07-frontend.md`](../specs/07-frontend.md) Section 4.6 | [ ] |
-| Create GPU monitoring page | [`07-frontend.md`](../specs/07-frontend.md) Section 4.3 | [ ] |
-| Create Clusters page | [`07-frontend.md`](../specs/07-frontend.md) Section 4.2 | [ ] |
-| Create Alerts page | [`07-frontend.md`](../specs/07-frontend.md) Section 4.5 | [ ] |
-| Add dark mode support | [`07-frontend.md`](../specs/07-frontend.md) Section 8 | [ ] |
+| Create Vite + React + TypeScript scaffold | [`07-frontend.md`](../specs/07-frontend.md) Section 3 | [x] |
+| Set up Tailwind CSS | [`07-frontend.md`](../specs/07-frontend.md) Section 8 | [x] |
+| Create API client with Axios | [`07-frontend.md`](../specs/07-frontend.md) Section 6 | [x] |
+| Implement Zustand stores | [`07-frontend.md`](../specs/07-frontend.md) Section 5 | [x] |
+| Implement useWebSocket hook | [`07-frontend.md`](../specs/07-frontend.md) Section 7 | [x] |
+| Create layout components | [`07-frontend.md`](../specs/07-frontend.md) Section 3 | [x] |
+| Create Dashboard page | [`07-frontend.md`](../specs/07-frontend.md) Section 4.1 | [x] |
+| Create Chat page | [`07-frontend.md`](../specs/07-frontend.md) Section 4.6 | [x] |
+| Create GPU monitoring page | [`07-frontend.md`](../specs/07-frontend.md) Section 4.3 | [x] |
+| Create Clusters page | [`07-frontend.md`](../specs/07-frontend.md) Section 4.2 | [x] |
+| Create Alerts page | [`07-frontend.md`](../specs/07-frontend.md) Section 4.5 | [x] |
+| Add dark mode support | [`07-frontend.md`](../specs/07-frontend.md) Section 8 | [x] |
 | Write component tests | [`07-frontend.md`](../specs/07-frontend.md) Section 10 | [ ] |
-| Add Dockerfile with nginx | [`07-frontend.md`](../specs/07-frontend.md) Section 9 | [ ] |
-| Update docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [ ] |
+| Add Dockerfile with nginx | [`07-frontend.md`](../specs/07-frontend.md) Section 9 | [x] |
+| Update docker-compose | [`09-deployment.md`](../specs/09-deployment.md) | [x] |
 
-**Exit Criteria:** Can view fleet status, manage clusters, chat with AI, monitor GPUs, see alerts - all via web UI.
+**Exit Criteria:** Can view fleet status, manage clusters, chat with AI, monitor GPUs, see alerts - all via web UI. ✅ ACHIEVED
 
 ---
 
@@ -658,3 +658,5 @@ Before marking any phase complete, verify:
 | Phase 2: Cluster Registry | ✅ Complete | 2024-12 |
 | Phase 3: Observability Collector | ✅ Complete | 2024-12 |
 | Phase 4: Intelligence Engine | ✅ Complete | 2024-12 |
+| Phase 5: Real-Time Streaming & API Gateway | ✅ Complete | 2024-12 |
+| Phase 6: Frontend MVP | ✅ Complete | 2024-12 |

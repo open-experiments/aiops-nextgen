@@ -37,13 +37,10 @@ jobs:
           pip install ruff mypy black
 
       - name: Run Ruff (lint)
-        run: ruff check src/
+        run: ruff check src/ --exclude src/frontend
 
       - name: Run Ruff (format check)
-        run: ruff format --check src/
-
-      - name: Run Black (format check)
-        run: black --check src/
+        run: ruff format --check src/ --exclude src/frontend
 
   # ===========================================================================
   # Type Checking
