@@ -172,8 +172,10 @@ class GPUService:
                 clusters = []
                 for cid in cluster_ids:
                     cluster = await self.cluster_registry.get_cluster(cid)
-                    if cluster and cluster.get("capabilities", {}).get("has_gpu_nodes"):
-                        clusters.append(cluster)
+                    if cluster:
+                        capabilities = cluster.get("capabilities") or {}
+                        if capabilities.get("has_gpu_nodes"):
+                            clusters.append(cluster)
                 return clusters
             else:
                 # Get all clusters with GPU
@@ -181,7 +183,7 @@ class GPUService:
                 return [
                     c
                     for c in all_clusters
-                    if c.get("capabilities", {}).get("has_gpu_nodes")
+                    if (c.get("capabilities") or {}).get("has_gpu_nodes")
                 ]
         except Exception as e:
             logger.error("Failed to get GPU clusters", error=str(e))

@@ -93,7 +93,8 @@ class GPUCollector:
         Queries K8s API for nodes with GPU labels and collects
         GPU data from each node.
         """
-        if not cluster.get("capabilities", {}).get("has_gpu_nodes"):
+        capabilities = cluster.get("capabilities") or {}
+        if not capabilities.get("has_gpu_nodes"):
             return []
 
         api_url = cluster.get("api_server_url", "")
@@ -203,7 +204,8 @@ class GPUCollector:
         Finds nvidia-driver-daemonset pod on the node and executes
         nvidia-smi via Kubernetes exec API.
         """
-        if not cluster.get("capabilities", {}).get("has_gpu_nodes"):
+        capabilities = cluster.get("capabilities") or {}
+        if not capabilities.get("has_gpu_nodes"):
             return None
 
         api_url = cluster.get("api_server_url", "")
@@ -439,7 +441,8 @@ class GPUCollector:
 
     def _get_mock_gpu_nodes(self, cluster: dict) -> list[dict[str, Any]]:
         """Generate mock GPU node data for testing."""
-        gpu_count = cluster.get("capabilities", {}).get("gpu_count", 0)
+        capabilities = cluster.get("capabilities") or {}
+        gpu_count = capabilities.get("gpu_count", 0)
         if gpu_count == 0:
             return []
 
@@ -469,10 +472,9 @@ class GPUCollector:
 
     def _generate_mock_gpus(self, cluster: dict, node_index: int) -> list[dict]:
         """Generate mock GPU data for testing."""
-        gpu_types = cluster.get("capabilities", {}).get(
-            "gpu_types", ["NVIDIA A100"]
-        )
-        gpu_count = min(cluster.get("capabilities", {}).get("gpu_count", 0), 8)
+        capabilities = cluster.get("capabilities") or {}
+        gpu_types = capabilities.get("gpu_types", ["NVIDIA A100"])
+        gpu_count = min(capabilities.get("gpu_count", 0), 8)
 
         # Distribute GPUs across nodes (2 GPUs per node typically)
         gpus_per_node = 2
